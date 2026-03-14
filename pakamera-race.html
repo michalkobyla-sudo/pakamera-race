@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pakamera Race">
+<meta name="theme-color" content="#0a0a0f">
+<title>Pakamera Race</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@300;400;500&display=swap');
+
+:root {
+  --bg: #0a0a0f;
+  --bg2: #12121a;
+  --bg3: #1a1a26;
+  --surface: #1e1e2e;
+  --surface2: #252535;
+  --accent: #e8ff00;
+  --accent2: #ff4444;
+  --accent3: #00ccff;
+  --text: #f0f0f8;
+  --text2: #8888aa;
+  --text3: #555570;
+  --border: #2a2a3e;
+  --gold: #ffd700;
+  --silver: #c0c0c0;
+  --bronze: #cd7f32;
+  --gravel: #c8a96e;
+  --asphalt: #6e8ec8;
+  --snow: #a8d8f0;
+  --mixed: #c86ec8;
+  --radius: 12px;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+/* ── LOADER ── */
+#loader {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999; gap: 20px;
+}
+.loader-logo {
+  font-family: var(--font-display);
+  font-size: 52px; font-weight: 900; letter-spacing: -1px;
+  color: var(--accent); line-height: 1;
+}
+.loader-logo span { color: var(--text2); font-weight: 400; }
+.loader-bar {
+  width: 200px; height: 3px; background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.loader-bar-inner {
+  height: 100%; background: var(--accent);
+  animation: loaderAnim 1.5s ease-in-out infinite;
+}
+@keyframes loaderAnim {
+  0% { width: 0; margin-left: 0; }
+  50% { width: 70%; margin-left: 15%; }
+  100% { width: 0; margin-left: 100%; }
+}
+
+/* ── APP SHELL ── */
+#app { height: 100vh; display: flex; flex-direction: column; }
+
+/* ── SCREENS ── */
+.screen {
+  display: none; flex: 1; overflow-y: auto;
+  padding-bottom: 80px;
+  -webkit-overflow-scrolling: touch;
+}
+.screen.active { display: flex; flex-direction: column; }
+
+/* ── AUTH SCREEN ── */
+#screen-auth {
+  padding-bottom: 0;
+  background: var(--bg);
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+.auth-wrap {
+  width: 100%; max-width: 380px; padding: 32px 24px;
+  display: flex; flex-direction: column; gap: 28px;
+}
+.auth-logo {
+  text-align: center;
+}
+.auth-logo-text {
+  font-family: var(--font-display);
+  font-size: 56px; font-weight: 900;
+  color: var(--accent); letter-spacing: -2px; line-height: 1;
+  text-shadow: 0 0 40px rgba(232,255,0,0.3);
+}
+.auth-logo-sub {
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 400; letter-spacing: 6px;
+  color: var(--text2); text-transform: uppercase; margin-top: 4px;
+}
+.auth-stripe {
+  display: flex; gap: 4px; margin-top: 12px;
+}
+.auth-stripe div {
+  height: 3px; flex: 1; border-radius: 2px;
+}
+.s1{background:var(--accent);}
+.s2{background:var(--accent2);}
+.s3{background:var(--accent3);}
+.s4{background:var(--accent);opacity:.5;}
+.s5{background:var(--text3);}
+
+.auth-tabs {
+  display: flex; background: var(--surface); border-radius: var(--radius);
+  padding: 3px; gap: 3px;
+}
+.auth-tab {
+  flex: 1; padding: 10px; border: none; background: transparent;
+  color: var(--text2); font-family: var(--font-display); font-size: 16px;
+  font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; border-radius: 9px; transition: all .2s;
+}
+.auth-tab.active {
+  background: var(--accent); color: var(--bg);
+}
+
+.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form.hidden { display: none; }
+
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-group label {
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--text2);
+}
+.input-group input {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  color: var(--text); font-family: var(--font-body); font-size: 16px;
+  outline: none; transition: border-color .2s;
+  -webkit-appearance: none;
+}
+.input-group input:focus { border-color: var(--accent); }
+
+.btn {
+  padding: 16px; border: none; border-radius: var(--radius);
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; cursor: pointer;
+  transition: all .2s; -webkit-appearance: none;
+}
+.btn-primary { background: var(--accent); color: var(--bg); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-danger { background: var(--accent2); color: #fff; }
+.btn-ghost {
+  background: transparent; color: var(--text2);
+  border: 1.5px solid var(--border);
+}
+.btn-sm { padding: 10px 16px; font-size: 14px; }
+
+.auth-error {
+  background: rgba(255,68,68,.15); border: 1px solid rgba(255,68,68,.3);
+  border-radius: var(--radius); padding: 12px 14px;
+  color: var(--accent2); font-size: 14px; display: none;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--bg); border-bottom: 1px solid var(--border);
+  padding: 14px 20px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0; position: sticky; top: 0; z-index: 100;
+}
+.topbar-logo {
+  font-family: var(--font-display); font-size: 28px; font-weight: 900;
+  color: var(--accent); letter-spacing: -1px; line-height: 1;
+}
+.topbar-logo span { color: var(--text2); font-weight: 400; }
+.topbar-user {
+  font-family: var(--font-display); font-size: 14px; font-weight: 600;
+  color: var(--text2); letter-spacing: 1px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
+.topbar-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface2); border: 2px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 14px; font-weight: 900;
+  color: var(--accent);
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg2); border-top: 1px solid var(--border);
+  display: flex; z-index: 200;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-btn {
+  flex: 1; padding: 12px 4px 10px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text3); transition: color .2s;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.nav-btn.active { color: var(--accent); }
+.nav-btn svg { width: 22px; height: 22px; }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  padding: 24px 20px 12px;
+}
+.section-title {
+  font-family: var(--font-display); font-size: 32px; font-weight: 900;
+  letter-spacing: -1px; color: var(--text); line-height: 1;
+}
+.section-sub {
+  font-size: 13px; color: var(--text2); margin-top: 4px;
+}
+
+/* ── SEARCH / FILTER ── */
+.search-bar {
+  padding: 0 20px 12px;
+  display: flex; gap: 10px;
+}
+.search-input-wrap {
+  flex: 1; position: relative;
+}
+.search-input-wrap svg {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px; color: var(--text3); pointer-events: none;
+}
+.search-input {
+  width: 100%; background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 10px 12px 10px 36px;
+  color: var(--text); font-family: var(--font-body); font-size: 15px;
+  outline: none; -webkit-appearance: none;
+}
+.search-input:focus { border-color: var(--accent); }
+
+.filter-chips {
+  padding: 0 20px 16px;
+  display: flex; gap: 8px; overflow-x: auto;
+  scrollbar-width: none;
+}
+.filter-chips::-webkit-scrollbar { display: none; }
+.chip {
+  padding: 6px 14px; border-radius: 20px;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--text2); cursor: pointer; white-space: nowrap; transition: all .2s;
+}
+.chip.active-chip { border-color: var(--accent); color: var(--accent); background: rgba(232,255,0,.08); }
+.chip-gravel { --cc: var(--gravel); }
+.chip-asphalt { --cc: var(--asphalt); }
+.chip-snow { --cc: var(--snow); }
+.chip-mixed { --cc: var(--mixed); }
+.chip.active-chip.chip-gravel { border-color: var(--gravel); color: var(--gravel); background: rgba(200,169,110,.1); }
+.chip.active-chip.chip-asphalt { border-color: var(--asphalt); color: var(--asphalt); background: rgba(110,142,200,.1); }
+.chip.active-chip.chip-snow { border-color: var(--snow); color: var(--snow); background: rgba(168,216,240,.1); }
+.chip.active-chip.chip-mixed { border-color: var(--mixed); color: var(--mixed); background: rgba(200,110,200,.1); }
+
+/* ── TRACK CARDS ── */
+.tracks-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+
+.track-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+  cursor: pointer; transition: all .2s; position: relative; overflow: hidden;
+}
+.track-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; border-radius: 2px 0 0 2px;
+}
+.track-card.gravel::before { background: var(--gravel); }
+.track-card.asphalt::before { background: var(--asphalt); }
+.track-card.snow::before { background: var(--snow); }
+.track-card.mixed::before { background: var(--mixed); }
+.track-card:active { transform: scale(0.98); background: var(--surface2); }
+
+.track-flag { font-size: 24px; flex-shrink: 0; }
+.track-info { flex: 1; min-width: 0; }
+.track-name {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  color: var(--text); line-height: 1.2;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.track-country {
+  font-size: 12px; color: var(--text2); margin-top: 2px;
+}
+.track-meta {
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.surface-badge {
+  padding: 3px 8px; border-radius: 6px;
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.surface-badge.gravel { background: rgba(200,169,110,.2); color: var(--gravel); }
+.surface-badge.asphalt { background: rgba(110,142,200,.2); color: var(--asphalt); }
+.surface-badge.snow { background: rgba(168,216,240,.2); color: var(--snow); }
+.surface-badge.mixed { background: rgba(200,110,200,.2); color: var(--mixed); }
+
+.track-times-count {
+  font-family: var(--font-display); font-size: 12px; font-weight: 700;
+  color: var(--text3);
+}
+
+/* ── TRACK DETAIL ── */
+#screen-track-detail { padding-bottom: 0; }
+.detail-back {
+  padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; color: var(--text2);
+  font-family: var(--font-display); font-size: 16px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.detail-hero {
+  padding: 0 20px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.detail-flag { font-size: 40px; }
+.detail-title {
+  font-family: var(--font-display); font-size: 36px; font-weight: 900;
+  letter-spacing: -1px; line-height: 1; color: var(--text);
+}
+.detail-meta-row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+
+/* Add time form */
+.add-time-section {
+  margin: 0 20px 20px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 18px;
+}
+.add-time-title {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text2);
+  margin-bottom: 14px;
+}
+.time-input-row {
+  display: flex; gap: 8px; align-items: flex-end;
+}
+.time-inputs {
+  flex: 1; display: flex; gap: 6px; align-items: center;
+}
+.time-sep {
+  color: var(--text2); font-size: 20px; font-weight: 700;
+  font-family: var(--font-display); flex-shrink: 0; padding-bottom: 2px;
+}
+.time-field {
+  background: var(--surface2); border: 1.5px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-family: var(--font-display); font-size: 24px; font-weight: 700;
+  outline: none; text-align: center; -webkit-appearance: none;
+  width: 52px; padding: 10px 4px;
+}
+.time-field.ms { width: 62px; font-size: 20px; }
+.time-field:focus { border-color: var(--accent); }
+.time-field-label {
+  font-family: var(--font-display); font-size: 10px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text3);
+  text-align: center; margin-top: 4px;
+}
+.time-field-group { display: flex; flex-direction: column; }
+
+/* Leaderboard */
+.leaderboard-section { padding: 0 20px 80px; }
+.lb-title {
+  font-family: var(--font-display); font-size: 20px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text2);
+  margin-bottom: 12px;
+}
+.lb-empty {
+  text-align: center; color: var(--text3); font-size: 14px;
+  padding: 30px 0;
+}
+.lb-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius);
+  background: var(--surface); border: 1.5px solid var(--border);
+  margin-bottom: 8px; position: relative;
+}
+.lb-row.my-row { border-color: var(--accent); background: rgba(232,255,0,.05); }
+.lb-row.pos-1 { border-color: var(--gold); background: rgba(255,215,0,.05); }
+.lb-row.pos-2 { border-color: var(--silver); }
+.lb-row.pos-3 { border-color: var(--bronze); }
+.lb-pos {
+  font-family: var(--font-display); font-size: 22px; font-weight: 900;
+  width: 30px; text-align: center; flex-shrink: 0;
+}
+.lb-row.pos-1 .lb-pos { color: var(--gold); }
+.lb-row.pos-2 .lb-pos { color: var(--silver); }
+.lb-row.pos-3 .lb-pos { color: var(--bronze); }
+.lb-row:not(.pos-1):not(.pos-2):not(.pos-3) .lb-pos { color: var(--text3); }
+.lb-name {
+  flex: 1; font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  color: var(--text);
+}
+.lb-time {
+  font-family: var(--font-display); font-size: 18px; font-weight: 700;
+  color: var(--accent); letter-spacing: 1px;
+}
+.lb-delete {
+  background: none; border: none; color: var(--text3); cursor: pointer;
+  padding: 4px; font-size: 16px;
+}
+.lb-diff {
+  font-size: 12px; color: var(--accent2);
+  font-family: var(--font-display); font-weight: 600;
+}
+
+/* ── RANKING SCREEN ── */
+.ranking-header {
+  padding: 0 20px 16px;
+}
+.ranking-tabs {
+  display: flex; background: var(--surface); border-radius: var(--radius);
+  padding: 3px; gap: 3px; margin-top: 12px;
+}
+.ranking-tab {
+  flex: 1; padding: 9px; border: none; background: transparent;
+  color: var(--text2); font-family: var(--font-display); font-size: 14px;
+  font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; border-radius: 9px; transition: all .2s;
+}
+.ranking-tab.active { background: var(--accent); color: var(--bg); }
+
+.ranking-list { padding: 0 20px 80px; display: flex; flex-direction: column; gap: 10px; }
+.rank-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.rank-card.rank-1 { border-color: var(--gold); background: rgba(255,215,0,.05); }
+.rank-card.rank-2 { border-color: var(--silver); }
+.rank-card.rank-3 { border-color: var(--bronze); }
+.rank-position {
+  font-family: var(--font-display); font-size: 36px; font-weight: 900;
+  width: 44px; text-align: center; flex-shrink: 0; line-height: 1;
+}
+.rank-card.rank-1 .rank-position { color: var(--gold); }
+.rank-card.rank-2 .rank-position { color: var(--silver); }
+.rank-card.rank-3 .rank-position { color: var(--bronze); }
+.rank-card:not(.rank-1):not(.rank-2):not(.rank-3) .rank-position { color: var(--text3); }
+.rank-info { flex: 1; }
+.rank-name {
+  font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--text);
+}
+.rank-stats { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.rank-points {
+  text-align: right;
+}
+.rank-pts-num {
+  font-family: var(--font-display); font-size: 28px; font-weight: 900;
+  color: var(--accent); line-height: 1;
+}
+.rank-pts-label {
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text3);
+}
+.rank-empty {
+  text-align: center; color: var(--text3); font-size: 14px; padding: 40px 0;
+}
+.points-info {
+  margin: 0 20px 16px; background: var(--surface); border-radius: var(--radius);
+  padding: 14px 16px; border: 1px solid var(--border);
+}
+.points-info p {
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+.points-info strong { color: var(--accent); }
+
+/* ── PROFILE SCREEN ── */
+.profile-header {
+  padding: 20px 20px 0;
+  display: flex; gap: 16px; align-items: center;
+}
+.profile-avatar-big {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--surface2); border: 3px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 28px; font-weight: 900;
+  color: var(--accent); flex-shrink: 0;
+}
+.profile-name {
+  font-family: var(--font-display); font-size: 28px; font-weight: 900;
+  color: var(--text); line-height: 1;
+}
+.profile-email { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+.profile-stats-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px; padding: 20px;
+}
+.stat-tile {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px 12px; text-align: center;
+}
+.stat-tile-num {
+  font-family: var(--font-display); font-size: 28px; font-weight: 900;
+  color: var(--accent); line-height: 1;
+}
+.stat-tile-label {
+  font-family: var(--font-display); font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text3);
+  margin-top: 4px;
+}
+
+.profile-history { padding: 0 20px 80px; }
+.history-title {
+  font-family: var(--font-display); font-size: 20px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text2);
+  margin-bottom: 12px;
+}
+.history-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.history-flag { font-size: 20px; }
+.history-info { flex: 1; }
+.history-track {
+  font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--text);
+}
+.history-date { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.history-time {
+  font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--accent);
+}
+.history-pos {
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  color: var(--text3);
+}
+
+.logout-btn-wrap { padding: 0 20px 20px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 24px; padding: 12px 20px;
+  font-family: var(--font-display); font-size: 14px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text);
+  z-index: 9000; opacity: 0; transition: all .3s; pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: var(--accent); color: var(--accent); }
+.toast.error { border-color: var(--accent2); color: var(--accent2); }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
+  z-index: 500; display: none; align-items: flex-end;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  width: 100%; background: var(--bg2); border-radius: 20px 20px 0 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border);
+  animation: slideUp .3s ease-out;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.modal-handle {
+  width: 40px; height: 4px; background: var(--border);
+  border-radius: 2px; margin: 0 auto 16px;
+}
+.modal-title {
+  font-family: var(--font-display); font-size: 22px; font-weight: 900;
+  color: var(--text); margin-bottom: 16px;
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 0; height: 0; }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="auth-stripe" style="width:200px">
+    <div class="s1"></div><div class="s2"></div><div class="s3"></div><div class="s4"></div><div class="s5"></div>
+  </div>
+  <div class="loader-logo">PAKAMERA<span>RACE</span></div>
+  <div class="loader-bar"><div class="loader-bar-inner"></div></div>
+</div>
+
+<div id="app" style="display:none">
+
+  <!-- AUTH -->
+  <div id="screen-auth" class="screen active">
+    <div class="auth-wrap">
+      <div class="auth-logo">
+        <div class="auth-logo-text">PAKAMERA<br>RACE</div>
+        <div class="auth-logo-sub">WRC Generations</div>
+        <div class="auth-stripe">
+          <div class="s1"></div><div class="s2"></div><div class="s3"></div><div class="s4"></div><div class="s5"></div>
+        </div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Logowanie</button>
+        <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Rejestracja</button>
+      </div>
+
+      <div class="auth-form" id="form-login">
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="twoj@email.com" autocomplete="email">
+        </div>
+        <div class="input-group">
+          <label>Hasło</label>
+          <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div class="auth-error" id="login-error"></div>
+        <button class="btn btn-primary" onclick="doLogin()">ZALOGUJ SIĘ</button>
+      </div>
+
+      <div class="auth-form hidden" id="form-register">
+        <div class="input-group">
+          <label>Nick / Pseudonim</label>
+          <input type="text" id="reg-nick" placeholder="Np. MisterRally" autocomplete="nickname">
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="twoj@email.com" autocomplete="email">
+        </div>
+        <div class="input-group">
+          <label>Hasło</label>
+          <input type="password" id="reg-pass" placeholder="min. 6 znaków" autocomplete="new-password">
+        </div>
+        <div class="auth-error" id="reg-error"></div>
+        <button class="btn btn-primary" onclick="doRegister()">ZAREJESTRUJ SIĘ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRACKS -->
+  <div id="screen-tracks" class="screen">
+    <div class="topbar">
+      <div class="topbar-logo">PAK<span>RACE</span></div>
+      <div class="topbar-user">
+        <div class="topbar-avatar" id="user-avatar-top">?</div>
+        <span id="user-nick-top"></span>
+      </div>
+    </div>
+    <div class="section-header">
+      <div class="section-title">TRASY</div>
+      <div class="section-sub" id="tracks-sub">Wybierz trasę aby dodać czas</div>
+    </div>
+    <div class="search-bar">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" type="search" placeholder="Szukaj trasy…" id="track-search" oninput="filterTracks()">
+      </div>
+    </div>
+    <div class="filter-chips" id="filter-chips">
+      <button class="chip active-chip" onclick="setFilter('all',this)">Wszystkie</button>
+      <button class="chip chip-gravel" onclick="setFilter('gravel',this)">🪨 Szuter</button>
+      <button class="chip chip-asphalt" onclick="setFilter('asphalt',this)">🛣️ Asfalt</button>
+      <button class="chip chip-snow" onclick="setFilter('snow',this)">❄️ Śnieg</button>
+      <button class="chip chip-mixed" onclick="setFilter('mixed',this)">🌦️ Mieszana</button>
+    </div>
+    <div class="tracks-list" id="tracks-list"></div>
+  </div>
+
+  <!-- TRACK DETAIL -->
+  <div id="screen-track-detail" class="screen">
+    <div class="detail-back" onclick="goBack()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      WRÓĆ
+    </div>
+    <div class="detail-hero">
+      <div class="detail-flag" id="detail-flag"></div>
+      <div class="detail-title" id="detail-title"></div>
+      <div class="detail-meta-row">
+        <div class="surface-badge" id="detail-surface-badge"></div>
+        <div style="font-size:13px;color:var(--text2)" id="detail-country"></div>
+      </div>
+    </div>
+    <div class="add-time-section">
+      <div class="add-time-title">➕ Dodaj swój czas</div>
+      <div class="time-input-row">
+        <div class="time-inputs">
+          <div class="time-field-group">
+            <input class="time-field" type="number" id="t-min" min="0" max="99" placeholder="00">
+            <div class="time-field-label">min</div>
+          </div>
+          <div class="time-sep">:</div>
+          <div class="time-field-group">
+            <input class="time-field" type="number" id="t-sec" min="0" max="59" placeholder="00">
+            <div class="time-field-label">sek</div>
+          </div>
+          <div class="time-sep">.</div>
+          <div class="time-field-group">
+            <input class="time-field ms" type="number" id="t-ms" min="0" max="999" placeholder="000">
+            <div class="time-field-label">ms</div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="submitTime()" style="flex-shrink:0">ZAPISZ</button>
+      </div>
+    </div>
+    <div class="leaderboard-section">
+      <div class="lb-title">🏆 RANKING TRASY</div>
+      <div id="leaderboard-list"></div>
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div id="screen-ranking" class="screen">
+    <div class="topbar">
+      <div class="topbar-logo">PAK<span>RACE</span></div>
+    </div>
+    <div class="section-header">
+      <div class="section-title">RANKING</div>
+    </div>
+    <div class="ranking-header">
+      <div class="ranking-tabs">
+        <button class="ranking-tab active" onclick="setRankingTab('points',this)">⭐ Punkty</button>
+        <button class="ranking-tab" onclick="setRankingTab('wins',this)">🏆 Wygrane</button>
+        <button class="ranking-tab" onclick="setRankingTab('races',this)">🎯 Przejazdy</button>
+      </div>
+    </div>
+    <div class="points-info">
+      <p>Punkty: <strong>25</strong> za 1. miejsce, <strong>18</strong> za 2., <strong>15</strong> za 3., <strong>12</strong> za 4., <strong>10</strong> za 5., <strong>8</strong> za 6., <strong>6</strong> za 7., <strong>4</strong> za 8., <strong>2</strong> za 9., <strong>1</strong> za 10.</p>
+    </div>
+    <div class="ranking-list" id="ranking-list"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="screen-profile" class="screen">
+    <div class="topbar">
+      <div class="topbar-logo">PAK<span>RACE</span></div>
+    </div>
+    <div class="profile-header">
+      <div class="profile-avatar-big" id="profile-avatar"></div>
+      <div>
+        <div class="profile-name" id="profile-name"></div>
+        <div class="profile-email" id="profile-email"></div>
+      </div>
+    </div>
+    <div class="profile-stats-grid" id="profile-stats"></div>
+    <div class="profile-history">
+      <div class="history-title">📋 Historia przejezdów</div>
+      <div id="profile-history-list"></div>
+    </div>
+    <div class="logout-btn-wrap">
+      <button class="btn btn-ghost" style="width:100%" onclick="doLogout()">WYLOGUJ SIĘ</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <button class="nav-btn active" id="nav-tracks" onclick="showScreen('tracks')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      Trasy
+    </button>
+    <button class="nav-btn" id="nav-ranking" onclick="showScreen('ranking')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Ranking
+    </button>
+    <button class="nav-btn" id="nav-profile" onclick="showScreen('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profil
+    </button>
+  </nav>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ═══════════════════════════════════════════════
+// ⚠️  WPISZ TUTAJ SWOJE DANE Z FIREBASE CONSOLE ⚠️
+// ═══════════════════════════════════════════════
+const firebaseConfig = {
+  apiKey: "AIzaSyA1cN0WoLdfRXA_ACigJl0QEZXvJmk8hNg",
+  authDomain: "pakamera-race-6250f.firebaseapp.com",
+  projectId: "pakamera-race-6250f",
+  storageBucket: "pakamera-race-6250f.firebasestorage.app",
+  messagingSenderId: "633840182778",
+  appId: "1:633840182778:web:49fd65dc92cd10595df043",
+  measurementId: "G-7FSCWK3279"
+};
+// ═══════════════════════════════════════════════
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// expose to window
+window._auth = auth;
+window._db = db;
+window._fb = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, doc, setDoc, getDoc, collection, addDoc, getDocs, query, where, orderBy, deleteDoc, serverTimestamp };
+
+onAuthStateChanged(auth, user => {
+  document.getElementById('loader').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  if (user) {
+    window._currentUser = user;
+    initApp();
+  } else {
+    window._currentUser = null;
+    document.getElementById('bottom-nav').style.display = 'none';
+    showScreen('auth');
+  }
+});
+</script>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+const TRACKS = [
+  // 2022 WRC Calendar
+  { id:'monte-carlo', name:'Rallye Monte-Carlo', country:'Monako / Francja', flag:'🇲🇨', surface:'mixed', stages:7 },
+  { id:'sweden', name:'Rally Sweden', country:'Szwecja', flag:'🇸🇪', surface:'snow', stages:8 },
+  { id:'croatia', name:'Croatia Rally', country:'Chorwacja', flag:'🇭🇷', surface:'asphalt', stages:8 },
+  { id:'portugal', name:'Rally de Portugal', country:'Portugalia', flag:'🇵🇹', surface:'gravel', stages:7 },
+  { id:'sardegna', name:'Rally Italia Sardegna', country:'Włochy (Sardynia)', flag:'🇮🇹', surface:'gravel', stages:7 },
+  { id:'kenya', name:'Safari Rally Kenya', country:'Kenia', flag:'🇰🇪', surface:'gravel', stages:7 },
+  { id:'estonia', name:'Rally Estonia', country:'Estonia', flag:'🇪🇪', surface:'gravel', stages:7 },
+  { id:'finland', name:'Rally Finland', country:'Finlandia', flag:'🇫🇮', surface:'gravel', stages:7 },
+  { id:'belgium', name:'Ypres Rally Belgium', country:'Belgia', flag:'🇧🇪', surface:'asphalt', stages:6 },
+  { id:'greece', name:'Acropolis Rally of Gods', country:'Grecja', flag:'🇬🇷', surface:'gravel', stages:8 },
+  { id:'new-zealand', name:'Rally New Zealand', country:'Nowa Zelandia', flag:'🇳🇿', surface:'gravel', stages:8 },
+  { id:'espana', name:'Rally de España', country:'Hiszpania', flag:'🇪🇸', surface:'mixed', stages:7 },
+  { id:'japan', name:'Rally Japan', country:'Japonia', flag:'🇯🇵', surface:'asphalt', stages:8 },
+  // Bonus
+  { id:'argentina', name:'Rally Argentina', country:'Argentyna', flag:'🇦🇷', surface:'gravel', stages:7 },
+  { id:'chile', name:'Rally Chile', country:'Chile', flag:'🇨🇱', surface:'gravel', stages:8 },
+  { id:'deutschland', name:'Rally Deutschland', country:'Niemcy', flag:'🇩🇪', surface:'asphalt', stages:7 },
+  { id:'mexico', name:'Rally Mexico', country:'Meksyk', flag:'🇲🇽', surface:'gravel', stages:7 },
+  { id:'turkey', name:'Rally Turkey', country:'Turcja', flag:'🇹🇷', surface:'gravel', stages:7 },
+  { id:'wales', name:'Wales Rally GB', country:'Walia / UK', flag:'🏴󠁧󠁢󠁷󠁬󠁳󠁿', surface:'gravel', stages:9 },
+  { id:'corse', name:'Tour de Corse', country:'Korsyka (Francja)', flag:'🇫🇷', surface:'asphalt', stages:2 },
+  { id:'sanremo', name:'Rally Sanremo', country:'Włochy', flag:'🇮🇹', surface:'asphalt', stages:2 },
+];
+
+const SURFACE_LABELS = { gravel:'Szuter', asphalt:'Asfalt', snow:'Śnieg', mixed:'Mieszana' };
+const WRC_POINTS = [25,18,15,12,10,8,6,4,2,1];
+
+let currentFilter = 'all';
+let currentTrack = null;
+let currentTrackTimes = [];
+let currentRankingTab = 'points';
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+async function initApp() {
+  const user = window._currentUser;
+  const db = window._db;
+  const { doc, getDoc, setDoc } = window._fb;
+
+  // load or create user profile
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, { nick: user.displayName || user.email.split('@')[0], email: user.email, createdAt: window._fb.serverTimestamp() });
+  }
+  window._userProfile = snap.exists() ? snap.data() : { nick: user.displayName || user.email.split('@')[0] };
+
+  document.getElementById('bottom-nav').style.display = 'flex';
+  updateTopbar();
+  renderTracks();
+  showScreen('tracks');
+}
+
+function updateTopbar() {
+  const nick = window._userProfile?.nick || '?';
+  document.getElementById('user-avatar-top').textContent = nick[0].toUpperCase();
+  document.getElementById('user-nick-top').textContent = nick;
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────
+function switchAuthTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab==='login');
+  document.getElementById('tab-register').classList.toggle('active', tab==='register');
+  document.getElementById('form-login').classList.toggle('hidden', tab!=='login');
+  document.getElementById('form-register').classList.toggle('hidden', tab!=='register');
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+  try {
+    await window._fb.signInWithEmailAndPassword(window._auth, email, pass);
+  } catch(e) {
+    errEl.style.display = 'block';
+    errEl.textContent = translateAuthError(e.code);
+  }
+}
+
+async function doRegister() {
+  const nick = document.getElementById('reg-nick').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const errEl = document.getElementById('reg-error');
+  errEl.style.display = 'none';
+  if (!nick) { errEl.style.display='block'; errEl.textContent='Wpisz nick!'; return; }
+  try {
+    const cred = await window._fb.createUserWithEmailAndPassword(window._auth, email, pass);
+    await window._fb.updateProfile(cred.user, { displayName: nick });
+    const { doc, setDoc, serverTimestamp } = window._fb;
+    await setDoc(doc(window._db, 'users', cred.user.uid), { nick, email, createdAt: serverTimestamp() });
+  } catch(e) {
+    errEl.style.display = 'block';
+    errEl.textContent = translateAuthError(e.code);
+  }
+}
+
+async function doLogout() {
+  await window._fb.signOut(window._auth);
+  document.getElementById('bottom-nav').style.display = 'none';
+  showScreen('auth');
+}
+
+function translateAuthError(code) {
+  const map = {
+    'auth/invalid-email': 'Nieprawidłowy email.',
+    'auth/user-not-found': 'Nie znaleziono konta.',
+    'auth/wrong-password': 'Błędne hasło.',
+    'auth/email-already-in-use': 'Email już zajęty.',
+    'auth/weak-password': 'Hasło min. 6 znaków.',
+    'auth/invalid-credential': 'Nieprawidłowe dane logowania.',
+  };
+  return map[code] || 'Błąd: ' + code;
+}
+
+// ── SCREENS ───────────────────────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-' + name);
+  if (nb) nb.classList.add('active');
+
+  if (name === 'ranking') loadRanking();
+  if (name === 'profile') loadProfile();
+  if (name === 'tracks') renderTracks();
+}
+
+function goBack() {
+  showScreen('tracks');
+}
+
+// ── TRACKS ────────────────────────────────────────────────────────────────
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active-chip'));
+  el.classList.add('active-chip');
+  filterTracks();
+}
+
+function filterTracks() {
+  const q = document.getElementById('track-search').value.toLowerCase();
+  const list = TRACKS.filter(t => {
+    const matchSurface = currentFilter === 'all' || t.surface === currentFilter;
+    const matchSearch = t.name.toLowerCase().includes(q) || t.country.toLowerCase().includes(q);
+    return matchSurface && matchSearch;
+  });
+  renderTrackList(list);
+}
+
+function renderTracks() {
+  renderTrackList(TRACKS);
+  document.getElementById('tracks-sub').textContent = `${TRACKS.length} rajdów · ${TRACKS.reduce((a,t)=>a+t.stages,0)} odcinków`;
+}
+
+function renderTrackList(list) {
+  const el = document.getElementById('tracks-list');
+  el.innerHTML = list.map(t => `
+    <div class="track-card ${t.surface}" onclick="openTrack('${t.id}')">
+      <div class="track-flag">${t.flag}</div>
+      <div class="track-info">
+        <div class="track-name">${t.name}</div>
+        <div class="track-country">${t.country} · ${t.stages} OS</div>
+      </div>
+      <div class="track-meta">
+        <div class="surface-badge ${t.surface}">${SURFACE_LABELS[t.surface]}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── TRACK DETAIL ──────────────────────────────────────────────────────────
+async function openTrack(id) {
+  currentTrack = TRACKS.find(t => t.id === id);
+  if (!currentTrack) return;
+
+  document.getElementById('detail-flag').textContent = currentTrack.flag;
+  document.getElementById('detail-title').textContent = currentTrack.name;
+  document.getElementById('detail-country').textContent = currentTrack.country + ' · ' + currentTrack.stages + ' OS';
+  const badge = document.getElementById('detail-surface-badge');
+  badge.textContent = SURFACE_LABELS[currentTrack.surface];
+  badge.className = 'surface-badge ' + currentTrack.surface;
+
+  document.getElementById('t-min').value = '';
+  document.getElementById('t-sec').value = '';
+  document.getElementById('t-ms').value = '';
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-track-detail').classList.add('active');
+
+  await loadLeaderboard(id);
+}
+
+async function loadLeaderboard(trackId) {
+  const { collection, query, where, orderBy, getDocs } = window._fb;
+  const db = window._db;
+  const el = document.getElementById('leaderboard-list');
+  el.innerHTML = '<div class="lb-empty">Ładowanie…</div>';
+
+  try {
+    const q = query(collection(db,'times'), where('trackId','==',trackId), orderBy('totalMs','asc'));
+    const snap = await getDocs(q);
+    currentTrackTimes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // keep only best time per user
+    const bestByUser = {};
+    currentTrackTimes.forEach(t => {
+      if (!bestByUser[t.userId] || t.totalMs < bestByUser[t.userId].totalMs) {
+        bestByUser[t.userId] = t;
+      }
+    });
+    const ranked = Object.values(bestByUser).sort((a,b) => a.totalMs - b.totalMs);
+
+    if (ranked.length === 0) {
+      el.innerHTML = '<div class="lb-empty">Brak czasów. Bądź pierwszy! 🏁</div>';
+      return;
+    }
+
+    const best = ranked[0].totalMs;
+    el.innerHTML = ranked.map((t,i) => {
+      const isMe = t.userId === window._currentUser.uid;
+      const diff = i > 0 ? '+' + msToString(t.totalMs - best) : '';
+      const posClass = i===0?'pos-1':i===1?'pos-2':i===2?'pos-3':'';
+      const meClass = isMe ? 'my-row' : '';
+      const deleteBtn = isMe ? `<button class="lb-delete" onclick="deleteTime('${t.id}','${trackId}')" title="Usuń">✕</button>` : '';
+      return `
+        <div class="lb-row ${posClass} ${meClass}">
+          <div class="lb-pos">${i+1}</div>
+          <div>
+            <div class="lb-name">${escHtml(t.nick)}${isMe?' 👤':''}</div>
+            ${diff ? `<div class="lb-diff">${diff}</div>` : ''}
+          </div>
+          <div class="lb-time">${msToString(t.totalMs)}</div>
+          ${deleteBtn}
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="lb-empty">Błąd ładowania danych.</div>';
+    console.error(e);
+  }
+}
+
+async function submitTime() {
+  const min = parseInt(document.getElementById('t-min').value) || 0;
+  const sec = parseInt(document.getElementById('t-sec').value) || 0;
+  const ms = parseInt(document.getElementById('t-ms').value) || 0;
+
+  if (sec > 59) { showToast('Sekundy: max 59', 'error'); return; }
+  if (ms > 999) { showToast('Milisekundy: max 999', 'error'); return; }
+  if (min === 0 && sec === 0 && ms === 0) { showToast('Wpisz czas!', 'error'); return; }
+
+  const totalMs = min*60000 + sec*1000 + ms;
+  const user = window._currentUser;
+  const nick = window._userProfile?.nick || user.displayName || user.email;
+  const { collection, addDoc, serverTimestamp } = window._fb;
+
+  try {
+    await addDoc(collection(window._db, 'times'), {
+      trackId: currentTrack.id,
+      trackName: currentTrack.name,
+      userId: user.uid,
+      nick,
+      totalMs,
+      timeStr: msToString(totalMs),
+      createdAt: serverTimestamp(),
+    });
+    showToast('Czas zapisany! 🏁', 'success');
+    document.getElementById('t-min').value = '';
+    document.getElementById('t-sec').value = '';
+    document.getElementById('t-ms').value = '';
+    await loadLeaderboard(currentTrack.id);
+  } catch(e) {
+    showToast('Błąd zapisu!', 'error');
+    console.error(e);
+  }
+}
+
+async function deleteTime(timeId, trackId) {
+  const { doc, deleteDoc } = window._fb;
+  try {
+    await deleteDoc(doc(window._db, 'times', timeId));
+    showToast('Usunięto', 'success');
+    await loadLeaderboard(trackId);
+  } catch(e) { showToast('Błąd usuwania', 'error'); }
+}
+
+// ── RANKING ───────────────────────────────────────────────────────────────
+function setRankingTab(tab, el) {
+  currentRankingTab = tab;
+  document.querySelectorAll('.ranking-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  loadRanking();
+}
+
+async function loadRanking() {
+  const { collection, getDocs } = window._fb;
+  const el = document.getElementById('ranking-list');
+  el.innerHTML = '<div class="rank-empty">Ładowanie…</div>';
+
+  try {
+    const snap = await getDocs(collection(window._db, 'times'));
+    const allTimes = snap.docs.map(d => d.data());
+
+    // best time per user per track
+    const bestByUserTrack = {};
+    allTimes.forEach(t => {
+      const key = t.userId + '_' + t.trackId;
+      if (!bestByUserTrack[key] || t.totalMs < bestByUserTrack[key].totalMs) {
+        bestByUserTrack[key] = t;
+      }
+    });
+
+    // build per-track rankings
+    const byTrack = {};
+    Object.values(bestByUserTrack).forEach(t => {
+      if (!byTrack[t.trackId]) byTrack[t.trackId] = [];
+      byTrack[t.trackId].push(t);
+    });
+    Object.values(byTrack).forEach(arr => arr.sort((a,b) => a.totalMs-b.totalMs));
+
+    // aggregate per user
+    const userData = {};
+    Object.values(byTrack).forEach(arr => {
+      arr.forEach((t, i) => {
+        if (!userData[t.userId]) userData[t.userId] = { nick: t.nick, points: 0, wins: 0, races: 0, uid: t.userId };
+        userData[t.userId].races++;
+        if (i < WRC_POINTS.length) userData[t.userId].points += WRC_POINTS[i];
+        if (i === 0) userData[t.userId].wins++;
+      });
+    });
+
+    let players = Object.values(userData);
+    if (currentRankingTab === 'points') players.sort((a,b) => b.points-a.points);
+    else if (currentRankingTab === 'wins') players.sort((a,b) => b.wins-a.wins);
+    else players.sort((a,b) => b.races-a.races);
+
+    if (players.length === 0) {
+      el.innerHTML = '<div class="rank-empty">Brak danych. Wejdź na trasę i ustaw czas! 🏁</div>';
+      return;
+    }
+
+    el.innerHTML = players.map((p,i) => {
+      const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'';
+      const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+      const val = currentRankingTab==='points'?p.points:currentRankingTab==='wins'?p.wins:p.races;
+      const label = currentRankingTab==='points'?'PKT':currentRankingTab==='wins'?'WIN':'RACE';
+      const isMe = p.uid === window._currentUser.uid;
+      return `
+        <div class="rank-card ${rankClass}" style="${isMe?'border-color:var(--accent);':'}">
+          <div class="rank-position">${medal||i+1}</div>
+          <div class="rank-info">
+            <div class="rank-name">${escHtml(p.nick)}${isMe?' 👤':''}</div>
+            <div class="rank-stats">${p.wins} wyg. · ${p.races} tras · ${p.points} pkt</div>
+          </div>
+          <div class="rank-points">
+            <div class="rank-pts-num">${val}</div>
+            <div class="rank-pts-label">${label}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch(e) {
+    el.innerHTML = '<div class="rank-empty">Błąd ładowania.</div>';
+    console.error(e);
+  }
+}
+
+// ── PROFILE ───────────────────────────────────────────────────────────────
+async function loadProfile() {
+  const user = window._currentUser;
+  const nick = window._userProfile?.nick || user.displayName || '?';
+
+  document.getElementById('profile-avatar').textContent = nick[0].toUpperCase();
+  document.getElementById('profile-name').textContent = nick;
+  document.getElementById('profile-email').textContent = user.email;
+
+  const { collection, query, where, getDocs, orderBy } = window._fb;
+  const q = query(collection(window._db,'times'), where('userId','==',user.uid), orderBy('createdAt','desc'));
+  const snap = await getDocs(q);
+  const myTimes = snap.docs.map(d => d.data());
+
+  // best per track
+  const bestByTrack = {};
+  myTimes.forEach(t => {
+    if (!bestByTrack[t.trackId] || t.totalMs < bestByTrack[t.trackId].totalMs) bestByTrack[t.trackId] = t;
+  });
+  const tracksRaced = Object.keys(bestByTrack).length;
+  const totalRuns = myTimes.length;
+  const bestTime = myTimes.length ? Math.min(...myTimes.map(t=>t.totalMs)) : null;
+
+  document.getElementById('profile-stats').innerHTML = `
+    <div class="stat-tile"><div class="stat-tile-num">${tracksRaced}</div><div class="stat-tile-label">Trasy</div></div>
+    <div class="stat-tile"><div class="stat-tile-num">${totalRuns}</div><div class="stat-tile-label">Przejazdy</div></div>
+    <div class="stat-tile"><div class="stat-tile-num">${bestTime ? msToString(bestTime) : '—'}</div><div class="stat-tile-label">Najlepszy</div></div>
+  `;
+
+  const histEl = document.getElementById('profile-history-list');
+  if (myTimes.length === 0) {
+    histEl.innerHTML = '<div style="color:var(--text3);font-size:14px;padding:20px 0;text-align:center">Brak przejezdów.</div>';
+    return;
+  }
+  histEl.innerHTML = myTimes.slice(0,30).map(t => {
+    const track = TRACKS.find(tr => tr.id === t.trackId);
+    const date = t.createdAt ? new Date(t.createdAt.seconds*1000).toLocaleDateString('pl') : '';
+    return `
+      <div class="history-item">
+        <div class="history-flag">${track?.flag||'🏁'}</div>
+        <div class="history-info">
+          <div class="history-track">${escHtml(t.trackName||track?.name||t.trackId)}</div>
+          <div class="history-date">${date}</div>
+        </div>
+        <div class="history-time">${t.timeStr||msToString(t.totalMs)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────
+function msToString(ms) {
+  const m = Math.floor(ms/60000);
+  const s = Math.floor((ms%60000)/1000);
+  const mi = ms%1000;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(mi).padStart(3,'0')}`;
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimer;
+function showToast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// expose global functions
+window.switchAuthTab = switchAuthTab;
+window.doLogin = doLogin;
+window.doRegister = doRegister;
+window.doLogout = doLogout;
+window.showScreen = showScreen;
+window.goBack = goBack;
+window.setFilter = setFilter;
+window.filterTracks = filterTracks;
+window.openTrack = openTrack;
+window.submitTime = submitTime;
+window.deleteTime = deleteTime;
+window.setRankingTab = setRankingTab;
+window.loadRanking = loadRanking;
+</script>
+</body>
+</html>
