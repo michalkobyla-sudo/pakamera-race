@@ -77,15 +77,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .siw svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text3);pointer-events:none}
 .si{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 12px 10px 36px;color:var(--text);font-family:var(--fb);font-size:15px;outline:none;-webkit-appearance:none}
 .si:focus{border-color:var(--accent)}
-.filter-chips{padding:0 20px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.filter-chips{padding:4px 20px 18px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
 .filter-chips::-webkit-scrollbar{display:none}
-.chip{padding:6px 14px;border-radius:20px;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s}
-.chip.ac{border-color:var(--accent);color:var(--accent);background:rgba(232,255,0,.08)}
+.chip{padding:8px 16px;border-radius:20px;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:2px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;display:inline-flex;align-items:center}
+.chip.ac{border-color:var(--accent)!important;color:var(--accent)!important;background:rgba(232,255,0,.12)!important}
 .chip:not(.ac):not(.acg):not(.aca):not(.acs):not(.acm){color:var(--text2)}
-.chip.acg.ac{border-color:var(--gravel);color:var(--gravel);background:rgba(200,169,110,.1)}
-.chip.aca.ac{border-color:var(--asphalt);color:var(--asphalt);background:rgba(110,142,200,.1)}
-.chip.acs.ac{border-color:var(--snow);color:var(--snow);background:rgba(168,216,240,.1)}
-.chip.acm.ac{border-color:var(--mixed);color:var(--mixed);background:rgba(200,110,200,.1)}
+.chip.acg.ac{border-color:var(--gravel)!important;color:var(--gravel)!important;background:rgba(200,169,110,.15)!important}
+.chip.aca.ac{border-color:var(--asphalt)!important;color:var(--asphalt)!important;background:rgba(110,142,200,.15)!important}
+.chip.acs.ac{border-color:var(--snow)!important;color:var(--snow)!important;background:rgba(168,216,240,.15)!important}
+.chip.acm.ac{border-color:var(--mixed)!important;color:var(--mixed)!important;background:rgba(200,110,200,.15)!important}
 /* TRACK CARDS */
 .tracks-list{padding:0 20px;display:flex;flex-direction:column;gap:10px}
 .track-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
@@ -369,67 +369,67 @@ onAuthStateChanged(auth, user => {
 <script>
 // ── DATA ─────────────────────────────────────────────────────────────────
 const TRACKS = [
-  { id:'monte-carlo', name:'Rallye Monte-Carlo', country:'Monako / Francja', flag:'\u{1F1F2}\u{1F1E8}', surface:'mixed',
+  { id:'monte-carlo', name:'Rallye Monte-Carlo', country:'Monako / Francja', flag:'🇲🇨', surface:'mixed',
     img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
     os:['Agnieres en Devoluy','Agnieres en Devoluy Reverse','Col de Braus','Col de Braus Reverse','La Bollene-Vesubie','Luceram','Luceram Reverse','Shakedown'] },
-  { id:'sweden', name:'Rally Sweden', country:'Szwecja', flag:'\u{1F1F8}\u{1F1EA}', surface:'snow',
+  { id:'sweden', name:'Rally Sweden', country:'Szwecja', flag:'🇸🇪', surface:'snow',
     img:'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800&q=80',
     os:['Brattby','Brattby Reverse','Kroksjoe','Kroksjoe Reverse','Ortrask','Ortrask Reverse','Savar','Savar Reverse','Shakedown'] },
-  { id:'croatia', name:'Croatia Rally', country:'Chorwacja', flag:'\u{1F1ED}\u{1F1F7}', surface:'asphalt',
+  { id:'croatia', name:'Croatia Rally', country:'Chorwacja', flag:'🇭🇷', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1555990793-da11153b6dcc?w=800&q=80',
     os:['Grdancji','Grdancji Reverse','Jaskovo','Jaskovo Reverse','Kostanjavec','Kostanjavec Reverse','Rude','Rude Reverse','Shakedown'] },
-  { id:'portugal', name:'Rally de Portugal', country:'Portugalia', flag:'\u{1F1F5}\u{1F1F9}', surface:'gravel',
+  { id:'portugal', name:'Rally de Portugal', country:'Portugalia', flag:'🇵🇹', surface:'gravel',
     img:'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=80',
     os:['Arganil','Arganil Reverse','Cabeceiras de Basto','Cabeceiras de Basto Reverse','Felgueiras','Felgueiras Reverse','Lousada','Shakedown'] },
-  { id:'sardegna', name:'Rally Italia Sardegna', country:'W\u0142ochy (Sardynia)', flag:'\u{1F1EE}\u{1F1F9}', surface:'gravel',
+  { id:'sardegna', name:'Rally Italia Sardegna', country:'W\u0142ochy (Sardynia)', flag:'🇮🇹', surface:'gravel',
     img:'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80',
     os:['Baranta','Baranta Reverse','Ittiri Arena','Lerno','Lerno Reverse','Monti di Ala','Monti di Ala Reverse','Shakedown'] },
-  { id:'kenya', name:'Safari Rally Kenya', country:'Kenia', flag:'\u{1F1F0}\u{1F1EA}', surface:'gravel',
+  { id:'kenya', name:'Safari Rally Kenya', country:'Kenia', flag:'🇰🇪', surface:'gravel',
     img:'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80',
     os:['Kasarani','Ngema','Ngema Reverse','Ntulele','Ntulele Reverse','Seyabei','Seyabei Reverse','Shakedown'] },
-  { id:'estonia', name:'Rally Estonia', country:'Estonia', flag:'\u{1F1EA}\u{1F1EA}', surface:'gravel',
+  { id:'estonia', name:'Rally Estonia', country:'Estonia', flag:'🇪🇪', surface:'gravel',
     img:'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80',
     os:['Elva','Elva Reverse','Kanepi','Kanepi Reverse','Otepaa','Otepaa Reverse','Tartu','Shakedown'] },
-  { id:'finland', name:'Rally Finland', country:'Finlandia', flag:'\u{1F1EB}\u{1F1EE}', surface:'gravel',
+  { id:'finland', name:'Rally Finland', country:'Finlandia', flag:'🇫🇮', surface:'gravel',
     img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
     os:['Arvaja','Arvaja Reverse','Harju','Laukaa','Laukaa Reverse','Pihlajakoski','Pihlajakoski Reverse','Shakedown'] },
-  { id:'belgium', name:'Ypres Rally Belgium', country:'Belgia', flag:'\u{1F1E7}\u{1F1EA}', surface:'asphalt',
+  { id:'belgium', name:'Ypres Rally Belgium', country:'Belgia', flag:'🇧🇪', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1490642914619-7955a3fd483c?w=800&q=80',
     os:['Dikkebus','Dikkebus Reverse','Kemmelberg','Kemmelberg Reverse','ZonneBeke','ZonneBeke Reverse','Shakedown'] },
-  { id:'greece', name:'Acropolis Rally of Gods', country:'Grecja', flag:'\u{1F1EC}\u{1F1F7}', surface:'gravel',
+  { id:'greece', name:'Acropolis Rally of Gods', country:'Grecja', flag:'🇬🇷', surface:'gravel',
     img:'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80',
     os:['Amfissa','Amfissa Reverse','Mendenitsa','Mendenitsa Reverse','Paleohori','Paleohori Reverse','Psatha','Psatha Reverse','Shakedown'] },
-  { id:'new-zealand', name:'Rally New Zealand', country:'Nowa Zelandia', flag:'\u{1F1F3}\u{1F1FF}', surface:'gravel',
+  { id:'new-zealand', name:'Rally New Zealand', country:'Nowa Zelandia', flag:'🇳🇿', surface:'gravel',
     img:'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80',
     os:['Batley','Batley Reverse','Brooks','Brooks Reverse','Te Akau South','Te Akau South Reverse','Te Hutewai','Te Hutewai Reverse','Shakedown'] },
-  { id:'espana', name:'Rally de Espana', country:'Hiszpania', flag:'\u{1F1EA}\u{1F1F8}', surface:'mixed',
+  { id:'espana', name:'Rally de Espana', country:'Hiszpania', flag:'🇪🇸', surface:'mixed',
     img:'https://images.unsplash.com/photo-1534766555764-ce878a5e3a2b?w=800&q=80',
     os:['Barcelona','Querol','Querol Reverse','Riudecanyes','Riudecanyes Reverse','Savalla','Savalla Reverse','Shakedown'] },
-  { id:'japan', name:'Rally Japan', country:'Japonia', flag:'\u{1F1EF}\u{1F1F5}', surface:'asphalt',
+  { id:'japan', name:'Rally Japan', country:'Japonia', flag:'🇯🇵', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80',
     os:['Nagakute','Nagakute Reverse','Okazaki','Okazaki Reverse','Shinshiro','Shinshiro Reverse','Shitara','Shitara Reverse','Shakedown'] },
-  { id:'argentina', name:'Rally Argentina', country:'Argentyna', flag:'\u{1F1E6}\u{1F1F7}', surface:'gravel',
+  { id:'argentina', name:'Rally Argentina', country:'Argentyna', flag:'🇦🇷', surface:'gravel',
     img:'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800&q=80',
     os:['Cantera','Cantera Reverse','Chuchilla Nevada','Chuchilla Nevada Reverse','El Condor','El Condor Reverse','Parque Tematico','Shakedown'] },
-  { id:'chile', name:'Rally Chile', country:'Chile', flag:'\u{1F1E8}\u{1F1F1}', surface:'gravel',
+  { id:'chile', name:'Rally Chile', country:'Chile', flag:'🇨🇱', surface:'gravel',
     img:'https://images.unsplash.com/photo-1518509562904-e7ef99cdbc86?w=800&q=80',
     os:['Biobio','Biobio Reverse','El Puma','El Puma Reverse','Lircay','Lircay Reverse','Pelun','Pelun Reverse','Shakedown'] },
-  { id:'deutschland', name:'Rally Deutschland', country:'Niemcy', flag:'\u{1F1E9}\u{1F1EA}', surface:'asphalt',
+  { id:'deutschland', name:'Rally Deutschland', country:'Niemcy', flag:'🇩🇪', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80',
     os:['Arena Panzerplatte','Freisen','Freisen Reverse','Mittelmosel','Mittelmosel Reverse','Moselland','Moselland Reverse','Shakedown'] },
-  { id:'mexico', name:'Rally Mexico', country:'Meksyk', flag:'\u{1F1F2}\u{1F1FD}', surface:'gravel',
+  { id:'mexico', name:'Rally Mexico', country:'Meksyk', flag:'🇲🇽', surface:'gravel',
     img:'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=800&q=80',
     os:['Autodromo de Leon','El Chocolate','El Chocolate Reverse','Ibarrilla','Ibarrilla Reverse','Media Luna','Media Luna Reverse','Shakedown'] },
-  { id:'turkey', name:'Rally Turkey', country:'Turcja', flag:'\u{1F1F9}\u{1F1F7}', surface:'gravel',
+  { id:'turkey', name:'Rally Turkey', country:'Turcja', flag:'🇹🇷', surface:'gravel',
     img:'https://images.unsplash.com/photo-1527838832700-5059252407fa?w=800&q=80',
     os:['Cicekli','Cicekli Reverse','Datca','Datca Reverse','Marmaris','Yesilbelde','Yesilbelde Reverse','Shakedown'] },
-  { id:'wales', name:'Wales Rally GB', country:'Walia / UK', flag:'\u{1F1EC}\u{1F1E7}', surface:'gravel',
+  { id:'wales', name:'Wales Rally GB', country:'Walia / UK', flag:'🇬🇧', surface:'gravel',
     img:'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
     os:['Brenig','Brenig Reverse','Dyfi','Dyfi Reverse','Great Orme','Great Orme Reverse','Hafren','Hafren Reverse','Shakedown'] },
-  { id:'corse', name:'Tour de Corse', country:'Korsyka (Francja)', flag:'\u{1F1EB}\u{1F1F7}', surface:'asphalt',
+  { id:'corse', name:'Tour de Corse', country:'Korsyka (Francja)', flag:'🇫🇷', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1499678329028-101435549a4e?w=800&q=80',
     os:['Pietrosella','Pietrosella Reverse','Shakedown'] },
-  { id:'sanremo', name:'Rally Sanremo', country:'W\u0142ochy', flag:'\u{1F1EE}\u{1F1F9}', surface:'asphalt',
+  { id:'sanremo', name:'Rally Sanremo', country:'W\u0142ochy', flag:'🇮🇹', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80',
     os:['Ronde','Ronde Reverse','Shakedown'] },
 ];
@@ -550,7 +550,7 @@ function renderTrackList(list) {
     <div class="track-card ${t.surface}" onclick="openTrack('${t.id}')">
       <img class="tc-img" src="${t.img}" alt="" loading="lazy" onerror="this.style.display='none'">
       <div class="tc-info">
-        <div class="tc-name">${t.flag} ${t.name}</div>
+        <div class="tc-name"><span style="font-family:Apple Color Emoji,Segoe UI Emoji,sans-serif">${t.flag}</span> ${t.name}</div>
         <div class="tc-country">${t.country} &middot; ${t.os.length} OS</div>
       </div>
       <div class="sb ${t.surface}">${SL[t.surface]}</div>
