@@ -1184,7 +1184,7 @@ async function loadRanking() {
       const label = currentRankingTab==='points'?'PKT':currentRankingTab==='wins'?'WIN':'RACE';
       const isMe = p.uid === window._currentUser.uid;
       return `
-        <div class="rank-card ${rankClass}" style="${isMe?'border-color:var(--accent);':'}">
+        <div class="rank-card ${rankClass}" style="${isMe?'border-color:var(--accent);':''}">
           <div class="rank-position">${medal||i+1}</div>
           <div class="rank-info">
             <div class="rank-name">${escHtml(p.nick)}${isMe?' 👤':''}</div>
