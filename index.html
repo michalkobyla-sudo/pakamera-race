@@ -81,6 +81,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .filter-chips::-webkit-scrollbar{display:none}
 .chip{padding:6px 14px;border-radius:20px;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s}
 .chip.ac{border-color:var(--accent);color:var(--accent);background:rgba(232,255,0,.08)}
+.chip:not(.ac):not(.acg):not(.aca):not(.acs):not(.acm){color:var(--text2)}
 .chip.acg.ac{border-color:var(--gravel);color:var(--gravel);background:rgba(200,169,110,.1)}
 .chip.aca.ac{border-color:var(--asphalt);color:var(--asphalt);background:rgba(110,142,200,.1)}
 .chip.acs.ac{border-color:var(--snow);color:var(--snow);background:rgba(168,216,240,.1)}
@@ -246,10 +247,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
     </div>
     <div class="filter-chips" id="fchips">
       <button class="chip ac" onclick="setFilter('all',this)">Wszystkie</button>
-      <button class="chip acg" onclick="setFilter('gravel',this)">&#x1faa8; Szuter</button>
-      <button class="chip aca" onclick="setFilter('asphalt',this)">&#x1f6e3;&#xfe0f; Asfalt</button>
-      <button class="chip acs" onclick="setFilter('snow',this)">&#x2744;&#xfe0f; &#x15anieg</button>
-      <button class="chip acm" onclick="setFilter('mixed',this)">&#x1f326;&#xfe0f; Mieszana</button>
+      <button class="chip acg" onclick="setFilter('gravel',this)">Szuter</button>
+      <button class="chip aca" onclick="setFilter('asphalt',this)">Asfalt</button>
+      <button class="chip acs" onclick="setFilter('snow',this)">&#x15a;nieg</button>
+      <button class="chip acm" onclick="setFilter('mixed',this)">Mieszana</button>
     </div>
     <div class="tracks-list" id="tracks-list"></div>
   </div>
@@ -522,7 +523,7 @@ function goBack() { showScreen('tracks'); }
 // ── TRACKS ────────────────────────────────────────────────────────────────
 function setFilter(f, el) {
   currentFilter = f;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('ac'));
+  document.querySelectorAll('#fchips .chip').forEach(c => c.classList.remove('ac'));
   el.classList.add('ac');
   filterTracks();
 }
