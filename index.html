@@ -617,7 +617,7 @@ async function loadLeaderboard() {
   const el = document.getElementById('lb-list');
   el.innerHTML = '<div class="lb-empty">Ładowanie...</div>';
   try {
-    const q = query(collection(window._db,'times'), where('trackKey','==',trackKey), orderBy('totalMs','asc'));
+    const q = query(collection(window._db,'times'), where('trackKey','==',trackKey));
     const snap = await getDocs(q);
     const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
 
@@ -756,9 +756,9 @@ async function loadProfile() {
   document.getElementById('prof-email').textContent = user.email;
 
   const { collection, query, where, orderBy, getDocs } = window._fb;
-  const q = query(collection(window._db,'times'), where('userId','==',user.uid), orderBy('createdAt','desc'));
+  const q = query(collection(window._db,'times'), where('userId','==',user.uid));
   const snap = await getDocs(q);
-  const my = snap.docs.map(d => d.data());
+  const my = snap.docs.map(d => d.data()).sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
 
   const bestByKey = {};
   my.forEach(t => { if (!bestByKey[t.trackKey] || t.totalMs < bestByKey[t.trackKey].totalMs) bestByKey[t.trackKey] = t; });
