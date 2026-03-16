@@ -351,7 +351,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil
     </button>
   </nav>
-  <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
+  <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none">
 </div>
 
 <div class="toast" id="toast"></div>
@@ -833,15 +833,15 @@ function openCamera() {
   if (!currentOS) { toast('Wybierz odcinek!', 'err'); return; }
   const inp = document.getElementById('photo-input');
   inp.value = '';
+  inp.onchange = function() { if (this.files && this.files[0]) handlePhoto(this); };
   inp.click();
 }
 
 async function handlePhoto(input) {
-  const file = input.files[0];
+  const file = input.files && input.files[0];
   if (!file) return;
-  input.value = '';
 
-  // Show modal with preview
+  // Show modal IMMEDIATELY before any async work
   const modal = document.getElementById('scan-modal');
   const preview = document.getElementById('scan-preview');
   const status = document.getElementById('scan-status');
@@ -853,6 +853,9 @@ async function handlePhoto(input) {
   status.className = 'scan-status';
   status.innerHTML = '<div class="scan-spinner"></div> Odczytuję czas (OCR)...';
   modal.classList.add('open');
+
+  // Force repaint on iOS
+  modal.offsetHeight;
 
   // Show image preview
   const reader = new FileReader();
