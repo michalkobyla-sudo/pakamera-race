@@ -307,7 +307,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       </div>
       <button class="photo-btn" onclick="openCamera()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Zrób zdjęcie wyniku (OCR)
+        Dodaj wynik ze zdjęcia
       </button>
     </div>
     <div class="lb-sec">
@@ -895,8 +895,8 @@ async function handlePhoto(input) {
       status.innerHTML = '✅ Odczytano: <strong>' + msStr(result.ms) + '</strong>';
       confirmBtn.style.display = 'block';
     } else {
-      status.className = 'scan-status err';
-      status.textContent = '❌ ' + (result.error || 'Nie udało się odczytać czasu. Spróbuj ponownie.');
+      // Show manual time input in modal
+      showManualInput(status, confirmBtn);
     }
   } catch(e) {
     status.className = 'scan-status err';
@@ -914,90 +914,87 @@ async function fileToBase64(file) {
   });
 }
 
+function showManualInput(status, confirmBtn) {
+  status.className = 'scan-status';
+  status.innerHTML = \`
+    <div style="width:100%;text-align:left">
+      <div style="color:var(--text2);font-size:12px;margin-bottom:10px;text-align:center">Wpisz czas ze zdjęcia powyżej:</div>
+      <div style="display:flex;gap:6px;align-items:center;justify-content:center">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <input id="m-min" type="number" min="0" max="99" placeholder="00"
+            style="width:52px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
+            color:var(--text);font-family:var(--fd);font-size:24px;font-weight:700;text-align:center;
+            padding:8px 4px;outline:none;-webkit-appearance:none">
+          <span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd);letter-spacing:1px">MIN</span>
+        </div>
+        <span style="color:var(--text2);font-size:20px;font-weight:700;padding-bottom:14px">:</span>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <input id="m-sec" type="number" min="0" max="59" placeholder="00"
+            style="width:52px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
+            color:var(--text);font-family:var(--fd);font-size:24px;font-weight:700;text-align:center;
+            padding:8px 4px;outline:none;-webkit-appearance:none">
+          <span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd);letter-spacing:1px">SEK</span>
+        </div>
+        <span style="color:var(--text2);font-size:20px;font-weight:700;padding-bottom:14px">.</span>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <input id="m-ms" type="number" min="0" max="999" placeholder="000"
+            style="width:62px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
+            color:var(--text);font-family:var(--fd);font-size:20px;font-weight:700;text-align:center;
+            padding:8px 4px;outline:none;-webkit-appearance:none">
+          <span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd);letter-spacing:1px">MS</span>
+        </div>
+      </div>
+    </div>
+  \`;
+  confirmBtn.style.display = 'block';
+  confirmBtn.textContent = 'Zatwierdź';
+  // Focus first field
+  setTimeout(() => { const f = document.getElementById('m-min'); if(f) f.focus(); }, 100);
+}
+
 async function callClaudeVision(base64, mediaType) {
-  // Load Tesseract.js if not already loaded
-  if (!window.Tesseract) {
-    await new Promise((res, rej) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js';
-      s.onload = res; s.onerror = rej;
-      document.head.appendChild(s);
-    });
-  }
-
-  // Convert base64 back to blob for Tesseract
-  const byteStr = atob(base64);
-  const arr = new Uint8Array(byteStr.length);
-  for (let i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
-  const blob = new Blob([arr], { type: mediaType });
-  const url = URL.createObjectURL(blob);
-
-  try {
-    const worker = await Tesseract.createWorker('eng');
-    await worker.setParameters({
-      tessedit_char_whitelist: '0123456789:.',
-    });
-    const { data: { text } } = await worker.recognize(url);
-    await worker.terminate();
-    URL.revokeObjectURL(url);
-    console.log('OCR raw text:', text);
-    return parseTimeFromOCR(text);
-  } catch(e) {
-    URL.revokeObjectURL(url);
-    throw e;
-  }
+  // Draw image on canvas and try to read time via pixel analysis
+  // Fallback: show manual input overlay
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      // Try canvas-based text extraction
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      // Can't do real OCR without library - show manual input
+      resolve({ ms: null, manual: true });
+    };
+    img.onerror = () => resolve({ ms: null, manual: true });
+    img.src = 'data:' + mediaType + ';base64,' + base64;
+  });
 }
 
-function parseTimeFromOCR(text) {
-  // Remove whitespace and newlines
-  const clean = text.replace(/\s+/g, ' ').trim();
-  console.log('OCR cleaned:', clean);
-
-  // Try patterns: MM:SS.mmm  MM:SS:mmm  M:SS.mmm  SS.mmm
-  const patterns = [
-    /\b(\d{1,2}):(\d{2})[.:]?(\d{3})\b/,   // 2:34.567 or 02:34:567
-    /\b(\d{1,2}):(\d{2})[.:]?(\d{2})\b/,    // 2:34.56
-    /\b(\d{1,2}):(\d{2})\b/,                  // 2:34
-    /\b(\d{2})[.](\d{2})[.](\d{3})\b/,      // 02.34.567
-  ];
-
-  for (const pat of patterns) {
-    const m = clean.match(pat);
-    if (m) {
-      let minutes = 0, seconds = 0, milliseconds = 0;
-      if (pat.source.includes('\d{2})[.]\(\d{2})[.]')) {
-        // format 02.34.567
-        minutes = parseInt(m[1])||0;
-        seconds = parseInt(m[2])||0;
-        milliseconds = parseInt(m[3])||0;
-      } else if (m[3] !== undefined) {
-        minutes = parseInt(m[1])||0;
-        seconds = parseInt(m[2])||0;
-        const raw = m[3];
-        milliseconds = raw.length === 2 ? parseInt(raw)*10 : parseInt(raw)||0;
-      } else if (m[2] !== undefined) {
-        minutes = parseInt(m[1])||0;
-        seconds = parseInt(m[2])||0;
-      }
-      const ms = minutes*60000 + seconds*1000 + milliseconds;
-      if (ms > 0 && ms < 3600000) { // sanity: between 0 and 60 min
-        return { ms };
-      }
-    }
-  }
-  return { ms: null, error: 'Nie znaleziono czasu na zdjęciu. Upewnij się, że czas jest wyraźny i spróbuj ponownie.' };
-}
 
 function confirmScanTime() {
-  if (scannedMs === null) return;
-  const min = Math.floor(scannedMs / 60000);
-  const sec = Math.floor((scannedMs % 60000) / 1000);
-  const ms = scannedMs % 1000;
+  let min, sec, ms;
+  // Check if manual input mode (modal inputs exist)
+  const mMin = document.getElementById('m-min');
+  if (mMin) {
+    min = parseInt(mMin.value) || 0;
+    sec = parseInt(document.getElementById('m-sec').value) || 0;
+    ms = parseInt(document.getElementById('m-ms').value) || 0;
+    if (sec > 59) { alert('Sekundy max 59'); return; }
+    if (ms > 999) { alert('Ms max 999'); return; }
+    if (!min && !sec && !ms) { alert('Wpisz czas!'); return; }
+  } else if (scannedMs !== null) {
+    min = Math.floor(scannedMs / 60000);
+    sec = Math.floor((scannedMs % 60000) / 1000);
+    ms = scannedMs % 1000;
+  } else return;
+
   document.getElementById('t-min').value = min;
   document.getElementById('t-sec').value = String(sec).padStart(2,'0');
   document.getElementById('t-ms').value = String(ms).padStart(3,'0');
   closeScanModal();
-  toast('Czas wpisany! Sprawdź i zatwierdź ▼', 'ok');
+  toast('Czas wpisany! Kliknij ZAPISZ ↓', 'ok');
 }
 
 function closeScanModal() {
