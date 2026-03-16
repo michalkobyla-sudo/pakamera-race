@@ -354,7 +354,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <div class="hist-title">&#x1f4cb; Historia przejazd&#xf3;w</div>
       <div id="hist-list"></div>
     </div>
-    <div class="logout-wrap"><button class="btn btn-ghost" style="width:100%" onclick="doLogout()">WYLOGUJ SI&#x118;</button></div>
+    <div class="logout-wrap" style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn btn-ghost" style="width:100%" onclick="showApiKeyModal()">🔑 Ustaw klucz API (skanowanie zdjęć)</button>
+      <button class="btn btn-ghost" style="width:100%" onclick="doLogout()">WYLOGUJ SIĘ</button>
+    </div>
   </div>
 
   <!-- NAV -->
