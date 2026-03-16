@@ -351,6 +351,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil
     </button>
   </nav>
+  <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
 </div>
 
 <div class="toast" id="toast"></div>
@@ -830,7 +831,9 @@ let scannedMs = null;
 
 function openCamera() {
   if (!currentOS) { toast('Wybierz odcinek!', 'err'); return; }
-  document.getElementById('photo-input').click();
+  const inp = document.getElementById('photo-input');
+  inp.value = '';
+  inp.click();
 }
 
 async function handlePhoto(input) {
