@@ -33,7 +33,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .s1{background:var(--accent)}.s2{background:var(--accent2)}.s3{background:var(--accent3)}.s4{background:var(--accent);opacity:.5}.s5{background:var(--text3)}
 /* APP */
 #app{height:100vh;display:flex;flex-direction:column}
-.screen{display:none;flex:1;overflow-y:auto;padding-bottom:80px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+.screen{display:none;flex:1;overflow-y:auto;padding-bottom:80px;-webkit-overflow-scrolling:touch}
 .screen.active{display:flex;flex-direction:column}
 /* AUTH */
 #screen-auth{padding-bottom:0;justify-content:center;align-items:center;min-height:100vh}
@@ -77,9 +77,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .siw svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text3);pointer-events:none}
 .si{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 12px 10px 36px;color:var(--text);font-family:var(--fb);font-size:15px;outline:none;-webkit-appearance:none}
 .si:focus{border-color:var(--accent)}
-.filter-select-wrap{padding:0 20px 16px}
-.filter-select{width:100%;background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius);padding:12px 16px;color:var(--text);font-family:var(--fd);font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238888aa' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
-.filter-select:focus{border-color:var(--accent)}
+.filter-chips{padding:0 20px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.filter-chips::-webkit-scrollbar{display:none}
+.chip{padding:6px 14px;border-radius:20px;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s}
+.chip.ac{border-color:var(--accent);color:var(--accent);background:rgba(232,255,0,.08)}
+.chip.acg.ac{border-color:var(--gravel);color:var(--gravel);background:rgba(200,169,110,.1)}
+.chip.aca.ac{border-color:var(--asphalt);color:var(--asphalt);background:rgba(110,142,200,.1)}
+.chip.acs.ac{border-color:var(--snow);color:var(--snow);background:rgba(168,216,240,.1)}
+.chip.acm.ac{border-color:var(--mixed);color:var(--mixed);background:rgba(200,110,200,.1)}
 /* TRACK CARDS */
 .tracks-list{padding:0 20px;display:flex;flex-direction:column;gap:10px}
 .track-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
@@ -126,7 +131,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .tfield-lbl{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);text-align:center;margin-top:4px}
 .tfg{display:flex;flex-direction:column}
 /* LEADERBOARD */
-.lb-sec{padding:0 20px 120px}
+.lb-sec{padding:0 20px 80px}
 .lb-title{font-family:var(--fd);font-size:18px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:12px}
 .lb-empty{text-align:center;color:var(--text3);font-size:14px;padding:30px 0}
 .lb-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);background:var(--surface);border:1.5px solid var(--border);margin-bottom:8px}
@@ -189,20 +194,24 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 /* PHOTO SCAN */
 .photo-btn{width:100%;margin-top:10px;padding:14px;border:2px dashed var(--border);border-radius:var(--radius);background:transparent;color:var(--text2);font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s}
 .photo-btn:active{border-color:var(--accent);color:var(--accent)}
-.photo-btn svg{width:20px;height:20px;flex-shrink:0}
 .scan-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
 .scan-modal.open{display:flex}
 .scan-box{background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;width:100%;max-width:400px;overflow:hidden}
 .scan-preview{width:100%;max-height:260px;object-fit:contain;background:#000;display:block}
 .scan-preview.hidden{display:none}
-.scan-status{padding:16px 20px;font-family:var(--fd);font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);text-align:center;min-height:56px;display:flex;align-items:center;justify-content:center;gap:8px}
-.scan-status.ok{color:var(--accent)}
-.scan-status.err{color:var(--accent2)}
+.scan-status{padding:16px 20px;font-family:var(--fd);font-size:14px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);text-align:center;min-height:56px;display:flex;align-items:center;justify-content:center;gap:8px}
+.scan-status.ok{color:var(--accent)}.scan-status.err{color:var(--accent2)}
 .scan-spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .scan-actions{display:flex;gap:10px;padding:0 16px 16px}
 .scan-actions .btn{flex:1;font-size:15px;padding:12px}
-
+.apikey-modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.apikey-modal.open{display:flex}
+.apikey-box{background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;width:100%;max-width:400px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.apikey-title{font-family:var(--fd);font-size:22px;font-weight:900;color:var(--text)}
+.apikey-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.apikey-inp{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;color:var(--text);font-size:13px;outline:none;-webkit-appearance:none;width:100%}
+.apikey-inp:focus{border-color:var(--accent)}
 ::-webkit-scrollbar{width:0;height:0}
 </style>
 </head>
@@ -257,14 +266,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         <input class="si" type="search" placeholder="Szukaj trasy&#x2026;" id="track-search" oninput="filterTracks()">
       </div>
     </div>
-    <div class="filter-select-wrap">
-      <select class="filter-select" id="fselect" onchange="setFilterSelect(this.value)">
-        <option value="all">Wszystkie nawierzchnie</option>
-        <option value="gravel">Szuter</option>
-        <option value="asphalt">Asfalt</option>
-        <option value="snow">Snieg</option>
-        <option value="mixed">Mieszana (asfalt + szuter)</option>
-      </select>
+    <div class="filter-chips" id="fchips">
+      <button class="chip ac" onclick="setFilter('all',this)">Wszystkie</button>
+      <button class="chip acg" onclick="setFilter('gravel',this)">&#x1faa8; Szuter</button>
+      <button class="chip aca" onclick="setFilter('asphalt',this)">&#x1f6e3;&#xfe0f; Asfalt</button>
+      <button class="chip acs" onclick="setFilter('snow',this)">&#x2744;&#xfe0f; &#x15anieg</button>
+      <button class="chip acm" onclick="setFilter('mixed',this)">&#x1f326;&#xfe0f; Mieszana</button>
     </div>
     <div class="tracks-list" id="tracks-list"></div>
   </div>
@@ -300,9 +307,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
         </div>
         <button class="btn btn-primary btn-sm" onclick="submitTime()" style="flex-shrink:0">ZAPISZ</button>
       </div>
+    </div>
       <button class="photo-btn" onclick="openCamera()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-        Dodaj wynik ze zdjęcia
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Dodaj wynik ze zdjęcia (AI)
       </button>
     </div>
     <div class="lb-sec">
@@ -354,15 +362,29 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   <!-- SCAN MODAL -->
   <div class="scan-modal" id="scan-modal">
     <div class="scan-box">
-      <img class="scan-preview hidden" id="scan-preview" alt="podglad">
-      <div class="scan-status" id="scan-status">Analizuje zdjęcie...</div>
+      <img class="scan-preview hidden" id="scan-preview" alt="">
+      <div class="scan-status" id="scan-status">Analizuję...</div>
       <div class="scan-actions">
         <button class="btn btn-ghost" onclick="closeScanModal()">Anuluj</button>
         <button class="btn btn-primary" id="scan-confirm-btn" style="display:none" onclick="confirmScanTime()">Zatwierdź</button>
       </div>
     </div>
   </div>
+  <!-- API KEY MODAL -->
+  <div class="apikey-modal" id="apikey-modal">
+    <div class="apikey-box">
+      <div class="apikey-title">🔑 Klucz API Anthropic</div>
+      <div class="apikey-desc">Wpisz swój klucz z <strong>console.anthropic.com</strong>. Zapisywany tylko na Twoim urządzeniu, nigdy w chmurze.</div>
+      <input class="apikey-inp" type="password" id="apikey-input" placeholder="sk-ant-...">
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost btn-sm" style="flex:1" onclick="closeApiKeyModal()">Anuluj</button>
+        <button class="btn btn-primary btn-sm" style="flex:1" onclick="saveApiKey()">Zapisz</button>
+      </div>
+      <div style="font-size:12px;color:var(--text3);text-align:center">Klucz nie opuszcza Twojego telefonu</div>
+    </div>
+  </div>
   <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none">
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -399,67 +421,67 @@ onAuthStateChanged(auth, user => {
 <script>
 // ── DATA ─────────────────────────────────────────────────────────────────
 const TRACKS = [
-  { id:'monte-carlo', name:'Rallye Monte-Carlo', country:'Monako / Francja', flag:'🇲🇨', surface:'mixed',
+  { id:'monte-carlo', name:'Rallye Monte-Carlo', country:'Monako / Francja', flag:'\u{1F1F2}\u{1F1E8}', surface:'mixed',
     img:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
     os:['Agnieres en Devoluy','Agnieres en Devoluy Reverse','Col de Braus','Col de Braus Reverse','La Bollene-Vesubie','Luceram','Luceram Reverse','Shakedown'] },
-  { id:'sweden', name:'Rally Sweden', country:'Szwecja', flag:'🇸🇪', surface:'snow',
+  { id:'sweden', name:'Rally Sweden', country:'Szwecja', flag:'\u{1F1F8}\u{1F1EA}', surface:'snow',
     img:'https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800&q=80',
     os:['Brattby','Brattby Reverse','Kroksjoe','Kroksjoe Reverse','Ortrask','Ortrask Reverse','Savar','Savar Reverse','Shakedown'] },
-  { id:'croatia', name:'Croatia Rally', country:'Chorwacja', flag:'🇭🇷', surface:'asphalt',
+  { id:'croatia', name:'Croatia Rally', country:'Chorwacja', flag:'\u{1F1ED}\u{1F1F7}', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1555990793-da11153b6dcc?w=800&q=80',
     os:['Grdancji','Grdancji Reverse','Jaskovo','Jaskovo Reverse','Kostanjavec','Kostanjavec Reverse','Rude','Rude Reverse','Shakedown'] },
-  { id:'portugal', name:'Rally de Portugal', country:'Portugalia', flag:'🇵🇹', surface:'gravel',
+  { id:'portugal', name:'Rally de Portugal', country:'Portugalia', flag:'\u{1F1F5}\u{1F1F9}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=80',
     os:['Arganil','Arganil Reverse','Cabeceiras de Basto','Cabeceiras de Basto Reverse','Felgueiras','Felgueiras Reverse','Lousada','Shakedown'] },
-  { id:'sardegna', name:'Rally Italia Sardegna', country:'W\u0142ochy (Sardynia)', flag:'🇮🇹', surface:'gravel',
+  { id:'sardegna', name:'Rally Italia Sardegna', country:'W\u0142ochy (Sardynia)', flag:'\u{1F1EE}\u{1F1F9}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80',
     os:['Baranta','Baranta Reverse','Ittiri Arena','Lerno','Lerno Reverse','Monti di Ala','Monti di Ala Reverse','Shakedown'] },
-  { id:'kenya', name:'Safari Rally Kenya', country:'Kenia', flag:'🇰🇪', surface:'gravel',
+  { id:'kenya', name:'Safari Rally Kenya', country:'Kenia', flag:'\u{1F1F0}\u{1F1EA}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=800&q=80',
     os:['Kasarani','Ngema','Ngema Reverse','Ntulele','Ntulele Reverse','Seyabei','Seyabei Reverse','Shakedown'] },
-  { id:'estonia', name:'Rally Estonia', country:'Estonia', flag:'🇪🇪', surface:'gravel',
+  { id:'estonia', name:'Rally Estonia', country:'Estonia', flag:'\u{1F1EA}\u{1F1EA}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=800&q=80',
     os:['Elva','Elva Reverse','Kanepi','Kanepi Reverse','Otepaa','Otepaa Reverse','Tartu','Shakedown'] },
-  { id:'finland', name:'Rally Finland', country:'Finlandia', flag:'🇫🇮', surface:'gravel',
+  { id:'finland', name:'Rally Finland', country:'Finlandia', flag:'\u{1F1EB}\u{1F1EE}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
     os:['Arvaja','Arvaja Reverse','Harju','Laukaa','Laukaa Reverse','Pihlajakoski','Pihlajakoski Reverse','Shakedown'] },
-  { id:'belgium', name:'Ypres Rally Belgium', country:'Belgia', flag:'🇧🇪', surface:'asphalt',
+  { id:'belgium', name:'Ypres Rally Belgium', country:'Belgia', flag:'\u{1F1E7}\u{1F1EA}', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1490642914619-7955a3fd483c?w=800&q=80',
     os:['Dikkebus','Dikkebus Reverse','Kemmelberg','Kemmelberg Reverse','ZonneBeke','ZonneBeke Reverse','Shakedown'] },
-  { id:'greece', name:'Acropolis Rally of Gods', country:'Grecja', flag:'🇬🇷', surface:'gravel',
+  { id:'greece', name:'Acropolis Rally of Gods', country:'Grecja', flag:'\u{1F1EC}\u{1F1F7}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80',
     os:['Amfissa','Amfissa Reverse','Mendenitsa','Mendenitsa Reverse','Paleohori','Paleohori Reverse','Psatha','Psatha Reverse','Shakedown'] },
-  { id:'new-zealand', name:'Rally New Zealand', country:'Nowa Zelandia', flag:'🇳🇿', surface:'gravel',
+  { id:'new-zealand', name:'Rally New Zealand', country:'Nowa Zelandia', flag:'\u{1F1F3}\u{1F1FF}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&q=80',
     os:['Batley','Batley Reverse','Brooks','Brooks Reverse','Te Akau South','Te Akau South Reverse','Te Hutewai','Te Hutewai Reverse','Shakedown'] },
-  { id:'espana', name:'Rally de Espana', country:'Hiszpania', flag:'🇪🇸', surface:'mixed',
+  { id:'espana', name:'Rally de Espana', country:'Hiszpania', flag:'\u{1F1EA}\u{1F1F8}', surface:'mixed',
     img:'https://images.unsplash.com/photo-1534766555764-ce878a5e3a2b?w=800&q=80',
     os:['Barcelona','Querol','Querol Reverse','Riudecanyes','Riudecanyes Reverse','Savalla','Savalla Reverse','Shakedown'] },
-  { id:'japan', name:'Rally Japan', country:'Japonia', flag:'🇯🇵', surface:'asphalt',
+  { id:'japan', name:'Rally Japan', country:'Japonia', flag:'\u{1F1EF}\u{1F1F5}', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80',
     os:['Nagakute','Nagakute Reverse','Okazaki','Okazaki Reverse','Shinshiro','Shinshiro Reverse','Shitara','Shitara Reverse','Shakedown'] },
-  { id:'argentina', name:'Rally Argentina', country:'Argentyna', flag:'🇦🇷', surface:'gravel',
+  { id:'argentina', name:'Rally Argentina', country:'Argentyna', flag:'\u{1F1E6}\u{1F1F7}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=800&q=80',
     os:['Cantera','Cantera Reverse','Chuchilla Nevada','Chuchilla Nevada Reverse','El Condor','El Condor Reverse','Parque Tematico','Shakedown'] },
-  { id:'chile', name:'Rally Chile', country:'Chile', flag:'🇨🇱', surface:'gravel',
+  { id:'chile', name:'Rally Chile', country:'Chile', flag:'\u{1F1E8}\u{1F1F1}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1518509562904-e7ef99cdbc86?w=800&q=80',
     os:['Biobio','Biobio Reverse','El Puma','El Puma Reverse','Lircay','Lircay Reverse','Pelun','Pelun Reverse','Shakedown'] },
-  { id:'deutschland', name:'Rally Deutschland', country:'Niemcy', flag:'🇩🇪', surface:'asphalt',
+  { id:'deutschland', name:'Rally Deutschland', country:'Niemcy', flag:'\u{1F1E9}\u{1F1EA}', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80',
     os:['Arena Panzerplatte','Freisen','Freisen Reverse','Mittelmosel','Mittelmosel Reverse','Moselland','Moselland Reverse','Shakedown'] },
-  { id:'mexico', name:'Rally Mexico', country:'Meksyk', flag:'🇲🇽', surface:'gravel',
+  { id:'mexico', name:'Rally Mexico', country:'Meksyk', flag:'\u{1F1F2}\u{1F1FD}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=800&q=80',
     os:['Autodromo de Leon','El Chocolate','El Chocolate Reverse','Ibarrilla','Ibarrilla Reverse','Media Luna','Media Luna Reverse','Shakedown'] },
-  { id:'turkey', name:'Rally Turkey', country:'Turcja', flag:'🇹🇷', surface:'gravel',
+  { id:'turkey', name:'Rally Turkey', country:'Turcja', flag:'\u{1F1F9}\u{1F1F7}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1527838832700-5059252407fa?w=800&q=80',
     os:['Cicekli','Cicekli Reverse','Datca','Datca Reverse','Marmaris','Yesilbelde','Yesilbelde Reverse','Shakedown'] },
-  { id:'wales', name:'Wales Rally GB', country:'Walia / UK', flag:'🇬🇧', surface:'gravel',
+  { id:'wales', name:'Wales Rally GB', country:'Walia / UK', flag:'\u{1F1EC}\u{1F1E7}', surface:'gravel',
     img:'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
     os:['Brenig','Brenig Reverse','Dyfi','Dyfi Reverse','Great Orme','Great Orme Reverse','Hafren','Hafren Reverse','Shakedown'] },
-  { id:'corse', name:'Tour de Corse', country:'Korsyka (Francja)', flag:'🇫🇷', surface:'asphalt',
+  { id:'corse', name:'Tour de Corse', country:'Korsyka (Francja)', flag:'\u{1F1EB}\u{1F1F7}', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1499678329028-101435549a4e?w=800&q=80',
     os:['Pietrosella','Pietrosella Reverse','Shakedown'] },
-  { id:'sanremo', name:'Rally Sanremo', country:'W\u0142ochy', flag:'🇮🇹', surface:'asphalt',
+  { id:'sanremo', name:'Rally Sanremo', country:'W\u0142ochy', flag:'\u{1F1EE}\u{1F1F9}', surface:'asphalt',
     img:'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80',
     os:['Ronde','Ronde Reverse','Shakedown'] },
 ];
@@ -551,8 +573,10 @@ function showScreen(name) {
 function goBack() { showScreen('tracks'); }
 
 // ── TRACKS ────────────────────────────────────────────────────────────────
-function setFilterSelect(f) {
+function setFilter(f, el) {
   currentFilter = f;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('ac'));
+  el.classList.add('ac');
   filterTracks();
 }
 
@@ -578,7 +602,7 @@ function renderTrackList(list) {
     <div class="track-card ${t.surface}" onclick="openTrack('${t.id}')">
       <img class="tc-img" src="${t.img}" alt="" loading="lazy" onerror="this.style.display='none'">
       <div class="tc-info">
-        <div class="tc-name"><span style="font-family:Apple Color Emoji,Segoe UI Emoji,sans-serif">${t.flag}</span> ${t.name}</div>
+        <div class="tc-name">${t.flag} ${t.name}</div>
         <div class="tc-country">${t.country} &middot; ${t.os.length} OS</div>
       </div>
       <div class="sb ${t.surface}">${SL[t.surface]}</div>
@@ -640,16 +664,13 @@ function clearTimeInputs() {
 
 async function loadLeaderboard() {
   const trackKey = currentTrack.id + '__' + currentOS;
-  const { collection, getDocs } = window._fb;
+  const { collection, query, where, orderBy, getDocs } = window._fb;
   const el = document.getElementById('lb-list');
   el.innerHTML = '<div class="lb-empty">Ładowanie...</div>';
   try {
+    const q = query(collection(window._db,'times'), where('trackKey','==',trackKey));
     const snap = await getDocs(collection(window._db,'times'));
-    const allDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    console.log('Szukam trackKey:', trackKey);
-    console.log('Wszystkie trackKey w bazie:', allDocs.map(d => d.trackKey));
-    const all = allDocs.filter(t => t.trackKey === trackKey);
-    console.log('Znalezione:', all.length);
+    const all = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => t.trackKey === trackKey);
 
     const bestByUser = {};
     all.forEach(t => {
@@ -788,7 +809,7 @@ async function loadProfile() {
   const { collection, query, where, orderBy, getDocs } = window._fb;
   const q = query(collection(window._db,'times'), where('userId','==',user.uid));
   const snap = await getDocs(q);
-  const my = snap.docs.map(d => d.data()).sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0));
+  const my = snap.docs.map(d => d.data()).sort((a,b) => (b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
 
   const bestByKey = {};
   my.forEach(t => { if (!bestByKey[t.trackKey] || t.totalMs < bestByKey[t.trackKey].totalMs) bestByKey[t.trackKey] = t; });
@@ -852,7 +873,6 @@ async function handlePhoto(input) {
   const file = input.files && input.files[0];
   if (!file) return;
 
-  // Show modal IMMEDIATELY before any async work
   const modal = document.getElementById('scan-modal');
   const preview = document.getElementById('scan-preview');
   const status = document.getElementById('scan-status');
@@ -862,21 +882,14 @@ async function handlePhoto(input) {
   confirmBtn.style.display = 'none';
   preview.classList.add('hidden');
   status.className = 'scan-status';
-  status.innerHTML = '<div class="scan-spinner"></div> Odczytuję czas (OCR)...';
+  status.innerHTML = '<div class="scan-spinner"></div> Claude AI analizuje...';
   modal.classList.add('open');
-
-  // Force repaint on iOS
   modal.offsetHeight;
 
-  // Show image preview
   const reader = new FileReader();
-  reader.onload = e => {
-    preview.src = e.target.result;
-    preview.classList.remove('hidden');
-  };
+  reader.onload = e => { preview.src = e.target.result; preview.classList.remove('hidden'); };
   reader.readAsDataURL(file);
 
-  // Convert to base64 for Claude API
   try {
     const base64 = await fileToBase64(file);
     const result = await callClaudeVision(base64, file.type);
@@ -886,13 +899,15 @@ async function handlePhoto(input) {
       status.className = 'scan-status ok';
       status.innerHTML = '✅ Odczytano: <strong>' + msStr(result.ms) + '</strong>';
       confirmBtn.style.display = 'block';
+    } else if (result.nokey) {
+      closeScanModal();
+      showApiKeyModal();
     } else {
-      // Show manual time input in modal
       showManualInput(status, confirmBtn);
     }
   } catch(e) {
     status.className = 'scan-status err';
-    status.textContent = '❌ Błąd: ' + e.message;
+    status.textContent = '❌ Błąd: ' + (e.message||'nieznany');
     console.error(e);
   }
 }
@@ -906,87 +921,76 @@ async function fileToBase64(file) {
   });
 }
 
+async function callClaudeVision(base64, mediaType) {
+  const key = localStorage.getItem('anthropic_key');
+  if (!key) return { ms: null, nokey: true };
+
+  const prompt = 'Na tym zdjeciu ekranu gry WRC Generations widac wynik przejazdu. Znajdz czas przejazdu (stage time / czas). Format w grze to np 01 48 495 oznaczajace 1 minute 48 sekund 495 milisekund. Odpowiedz WYLACZNIE samym JSON: {"minutes":1,"seconds":48,"milliseconds":495}. Jezeli nie mozesz odczytac: {"error":"opis"}';
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 100,
+      messages: [{ role: 'user', content: [
+        { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+        { type: 'text', text: prompt }
+      ]}]
+    })
+  });
+
+  if (!resp.ok) {
+    const e = await resp.json().catch(()=>({}));
+    if (resp.status === 401) { localStorage.removeItem('anthropic_key'); return { ms: null, nokey: true }; }
+    throw new Error(e.error?.message || 'API ' + resp.status);
+  }
+
+  const data = await resp.json();
+  const text = (data.content?.[0]?.text || '').replace(/```json|```/g,'').trim();
+  console.log('Claude:', text);
+
+  try {
+    const p = JSON.parse(text);
+    if (p.error) return { ms: null, manual: true };
+    const ms = (parseInt(p.minutes)||0)*60000 + (parseInt(p.seconds)||0)*1000 + (parseInt(p.milliseconds)||0);
+    if (ms > 0 && ms < 3600000) return { ms };
+    return { ms: null, manual: true };
+  } catch(e) {
+    return { ms: null, manual: true };
+  }
+}
+
 function showManualInput(status, confirmBtn) {
   status.className = 'scan-status';
-  status.innerHTML = `
-    <div style="width:100%;text-align:left">
-      <div style="color:var(--text2);font-size:12px;margin-bottom:10px;text-align:center">Wpisz czas ze zdjęcia powyżej:</div>
-      <div style="display:flex;gap:6px;align-items:center;justify-content:center">
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <input id="m-min" type="number" min="0" max="99" placeholder="00"
-            style="width:52px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
-            color:var(--text);font-family:var(--fd);font-size:24px;font-weight:700;text-align:center;
-            padding:8px 4px;outline:none;-webkit-appearance:none">
-          <span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd);letter-spacing:1px">MIN</span>
-        </div>
-        <span style="color:var(--text2);font-size:20px;font-weight:700;padding-bottom:14px">:</span>
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <input id="m-sec" type="number" min="0" max="59" placeholder="00"
-            style="width:52px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
-            color:var(--text);font-family:var(--fd);font-size:24px;font-weight:700;text-align:center;
-            padding:8px 4px;outline:none;-webkit-appearance:none">
-          <span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd);letter-spacing:1px">SEK</span>
-        </div>
-        <span style="color:var(--text2);font-size:20px;font-weight:700;padding-bottom:14px">.</span>
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <input id="m-ms" type="number" min="0" max="999" placeholder="000"
-            style="width:62px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;
-            color:var(--text);font-family:var(--fd);font-size:20px;font-weight:700;text-align:center;
-            padding:8px 4px;outline:none;-webkit-appearance:none">
-          <span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd);letter-spacing:1px">MS</span>
-        </div>
-      </div>
-    </div>
-  `;
+  status.innerHTML = '<div style="width:100%"><div style="color:var(--text2);font-size:11px;margin-bottom:8px;text-align:center;letter-spacing:1px">WPISZ CZAS ZE ZDJĘCIA</div><div style="display:flex;gap:6px;align-items:center;justify-content:center"><div style="display:flex;flex-direction:column;align-items:center"><input id="m-min" type="number" min="0" max="99" placeholder="00" style="width:52px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--fd);font-size:22px;font-weight:700;text-align:center;padding:8px 4px;outline:none;-webkit-appearance:none"><span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd)">MIN</span></div><span style="color:var(--text2);font-size:20px;font-weight:700;padding-bottom:14px">:</span><div style="display:flex;flex-direction:column;align-items:center"><input id="m-sec" type="number" min="0" max="59" placeholder="00" style="width:52px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--fd);font-size:22px;font-weight:700;text-align:center;padding:8px 4px;outline:none;-webkit-appearance:none"><span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd)">SEK</span></div><span style="color:var(--text2);font-size:20px;font-weight:700;padding-bottom:14px">.</span><div style="display:flex;flex-direction:column;align-items:center"><input id="m-ms" type="number" min="0" max="999" placeholder="000" style="width:62px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--fd);font-size:18px;font-weight:700;text-align:center;padding:8px 4px;outline:none;-webkit-appearance:none"><span style="font-size:10px;color:var(--text3);margin-top:3px;font-family:var(--fd)">MS</span></div></div></div>';
   confirmBtn.style.display = 'block';
-  confirmBtn.textContent = 'Zatwierdź';
-  // Focus first field
   setTimeout(() => { const f = document.getElementById('m-min'); if(f) f.focus(); }, 100);
 }
 
-async function callClaudeVision(base64, mediaType) {
-  // Draw image on canvas and try to read time via pixel analysis
-  // Fallback: show manual input overlay
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => {
-      // Try canvas-based text extraction
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      // Can't do real OCR without library - show manual input
-      resolve({ ms: null, manual: true });
-    };
-    img.onerror = () => resolve({ ms: null, manual: true });
-    img.src = 'data:' + mediaType + ';base64,' + base64;
-  });
-}
-
-
 function confirmScanTime() {
-  let min, sec, ms;
-  // Check if manual input mode (modal inputs exist)
   const mMin = document.getElementById('m-min');
+  let min, sec, ms;
   if (mMin) {
-    min = parseInt(mMin.value) || 0;
-    sec = parseInt(document.getElementById('m-sec').value) || 0;
-    ms = parseInt(document.getElementById('m-ms').value) || 0;
-    if (sec > 59) { alert('Sekundy max 59'); return; }
-    if (ms > 999) { alert('Ms max 999'); return; }
-    if (!min && !sec && !ms) { alert('Wpisz czas!'); return; }
+    min = parseInt(mMin.value)||0;
+    sec = parseInt(document.getElementById('m-sec').value)||0;
+    ms = parseInt(document.getElementById('m-ms').value)||0;
+    if (!min && !sec && !ms) { toast('Wpisz czas!','err'); return; }
   } else if (scannedMs !== null) {
-    min = Math.floor(scannedMs / 60000);
-    sec = Math.floor((scannedMs % 60000) / 1000);
-    ms = scannedMs % 1000;
+    min = Math.floor(scannedMs/60000);
+    sec = Math.floor((scannedMs%60000)/1000);
+    ms = scannedMs%1000;
   } else return;
-
   document.getElementById('t-min').value = min;
   document.getElementById('t-sec').value = String(sec).padStart(2,'0');
   document.getElementById('t-ms').value = String(ms).padStart(3,'0');
   closeScanModal();
-  toast('Czas wpisany! Kliknij ZAPISZ ↓', 'ok');
+  toast('Czas wpisany! Kliknij ZAPISZ ↓','ok');
 }
 
 function closeScanModal() {
@@ -994,9 +998,27 @@ function closeScanModal() {
   scannedMs = null;
 }
 
+function showApiKeyModal() {
+  const k = localStorage.getItem('anthropic_key');
+  if (k) document.getElementById('apikey-input').value = k;
+  document.getElementById('apikey-modal').classList.add('open');
+}
+
+function closeApiKeyModal() {
+  document.getElementById('apikey-modal').classList.remove('open');
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apikey-input').value.trim();
+  if (!key.startsWith('sk-ant-')) { toast('Klucz musi zaczynać się od sk-ant-','err'); return; }
+  localStorage.setItem('anthropic_key', key);
+  closeApiKeyModal();
+  toast('Klucz zapisany!','ok');
+}
+
 window.openTrack=openTrack; window.selectOS=selectOS; window.submitTime=submitTime; window.deleteTime=deleteTime;
 window.setRankTab=setRankTab;
-window.openCamera=openCamera; window.handlePhoto=handlePhoto; window.confirmScanTime=confirmScanTime; window.closeScanModal=closeScanModal;
+window.openCamera=openCamera; window.handlePhoto=handlePhoto; window.confirmScanTime=confirmScanTime; window.closeScanModal=closeScanModal; window.showApiKeyModal=showApiKeyModal; window.closeApiKeyModal=closeApiKeyModal; window.saveApiKey=saveApiKey;
 </script>
 </body>
 </html>
