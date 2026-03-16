@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
@@ -34,7 +33,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .s1{background:var(--accent)}.s2{background:var(--accent2)}.s3{background:var(--accent3)}.s4{background:var(--accent);opacity:.5}.s5{background:var(--text3)}
 /* APP */
 #app{height:100vh;display:flex;flex-direction:column}
-.screen{display:none;flex:1;overflow-y:auto;padding-bottom:80px;-webkit-overflow-scrolling:touch}
+.screen{display:none;flex:1;overflow-y:auto;padding-bottom:80px;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
 .screen.active{display:flex;flex-direction:column}
 /* AUTH */
 #screen-auth{padding-bottom:0;justify-content:center;align-items:center;min-height:100vh}
@@ -100,7 +99,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .sb.snow{background:rgba(168,216,240,.2);color:var(--snow)}
 .sb.mixed{background:rgba(200,110,200,.2);color:var(--mixed)}
 /* TRACK DETAIL */
-#screen-track-detail{padding-bottom:0}
+#screen-track-detail{padding-bottom:100px}
 .detail-back{padding:14px 20px;display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--text2);font-family:var(--fd);font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
 .detail-hero-img{width:100%;height:210px;object-fit:cover;display:block}
 .detail-hero-overlay{position:relative;margin-top:-56px;padding:0 20px 16px;background:linear-gradient(to bottom,transparent,var(--bg) 65%)}
@@ -127,7 +126,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 .tfield-lbl{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);text-align:center;margin-top:4px}
 .tfg{display:flex;flex-direction:column}
 /* LEADERBOARD */
-.lb-sec{padding:0 20px 80px}
+.lb-sec{padding:0 20px 120px}
 .lb-title{font-family:var(--fd);font-size:18px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);margin-bottom:12px}
 .lb-empty{text-align:center;color:var(--text3);font-size:14px;padding:30px 0}
 .lb-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);background:var(--surface);border:1.5px solid var(--border);margin-bottom:8px}
@@ -200,7 +199,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
 <div id="app" style="display:none">
 
   <!-- AUTH -->
-
   <div id="screen-auth" class="screen active">
     <div class="auth-wrap">
       <div class="auth-logo">
@@ -229,7 +227,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   </div>
 
   <!-- TRACKS -->
-
   <div id="screen-tracks" class="screen">
     <div class="topbar">
       <div class="topbar-logo">PAK<span>RACE</span></div>
@@ -255,7 +252,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   </div>
 
   <!-- TRACK DETAIL -->
-
   <div id="screen-track-detail" class="screen">
     <div class="detail-back" onclick="goBack()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
@@ -294,7 +290,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   </div>
 
   <!-- RANKING -->
-
   <div id="screen-ranking" class="screen">
     <div class="topbar"><div class="topbar-logo">PAK<span>RACE</span></div></div>
     <div class="sec-hdr"><div class="sec-title">RANKING</div></div>
@@ -308,7 +303,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   </div>
 
   <!-- PROFILE -->
-
   <div id="screen-profile" class="screen">
     <div class="topbar"><div class="topbar-logo">PAK<span>RACE</span></div></div>
     <div class="prof-hdr">
@@ -324,7 +318,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--f
   </div>
 
   <!-- NAV -->
-
   <nav class="bottom-nav" id="bottom-nav">
     <button class="nav-btn active" id="nav-tracks" onclick="showScreen('tracks')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>Trasy
@@ -618,7 +611,11 @@ async function loadLeaderboard() {
   el.innerHTML = '<div class="lb-empty">Ładowanie...</div>';
   try {
     const snap = await getDocs(collection(window._db,'times'));
-    const all = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(t => t.trackKey === trackKey);
+    const allDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    console.log('Szukam trackKey:', trackKey);
+    console.log('Wszystkie trackKey w bazie:', allDocs.map(d => d.trackKey));
+    const all = allDocs.filter(t => t.trackKey === trackKey);
+    console.log('Znalezione:', all.length);
 
     const bestByUser = {};
     all.forEach(t => {
@@ -808,6 +805,5 @@ window.showScreen=showScreen; window.goBack=goBack; window.setFilterSelect=setFi
 window.openTrack=openTrack; window.selectOS=selectOS; window.submitTime=submitTime; window.deleteTime=deleteTime;
 window.setRankTab=setRankTab;
 </script>
-
 </body>
 </html>
